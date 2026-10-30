@@ -87,7 +87,7 @@ body:not(.pad):not(.kb) .foot{display:none}
 </style>
 </head>
 <body>
-<div id="gate"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
+<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
 <div id="bg"></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <div id="app"><div class="wrap">
@@ -195,7 +195,7 @@ const byId={};TR.forEach(t=>byId[t.id]=t);
 const rng=(a,b)=>TR.map(t=>t.id).filter(i=>i>=a&&i<=b);
 const all=a=>({n:a,ids:null,isAll:true});
 const TABS=[
- {h:"LISTEN TO TAPES",d:"Acquired Tapes",sm:"Listen to tapes acquired in the field.",bar:"CASSETTE TAPES",G:[{n:"Chico's Tapes",ids:rng(1,7)},{n:"Agent's Recording",ids:[8]},{n:"Mission Briefing",ids:rng(10,18)},{n:"Paz's Tapes",ids:rng(19,28)},all("All Tapes")]},
+ {hideMissing:true,h:"LISTEN TO TAPES",d:"Acquired Tapes",sm:"Listen to tapes acquired in the field.",bar:"CASSETTE TAPES",G:[{n:"Chico's Tapes",ids:rng(1,7)},{n:"Agent's Recording",ids:[8]},{n:"Mission Briefing",ids:rng(10,18)},{n:"Paz's Tapes",ids:rng(19,28)},all("All Tapes")]},
  {h:"LISTEN TO RECORDS",d:"Records",sm:"Communications and personal diary entries.",bar:"RECORDS",G:[{n:"Communications Records",ids:[29,30]},{n:"Paz's Diary",ids:[...rng(31,39),50]},all("All Records")]},
  {h:"LISTEN TO MUSIC",d:"Music",sm:"Optional. Add song files with ADD FILES. Songs with no built-in slot are added automatically from their mp3 tags.",bar:"SONGS",G:[{n:"Peace Walker Medley",ids:[41,42,43]},{n:"Peace Walker Soundtrack",ids:rng(51,64)},{n:"Other Songs",ids:[40,44,45,46,47,48,49]},all("All Songs")]}
 ];
@@ -219,7 +219,9 @@ let sel=0,rsel=0,pane='L',q=[],qi=-1,rep=false,state='stop',zip=null,files={},ur
 const have=i=>!!files[i];
 const avail=ids=>ids.filter(have);
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
-function tracks(){return[-1,...G[sel].ids]}
+const NOTAPES={n:'No tapes added yet',ids:[],empty:true};
+function curG(){const T=TABS[tab];if(!T.hideMissing)return T.G;const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[NOTAPES]}
+function tracks(){const g=G[sel];if(!g||g.empty)return[];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;return[-1,...ids]}
 
 /* ---------- ZIP reading (no libraries) ---------- */
 const MIME={mp3:'audio/mpeg',m4a:'audio/mp4',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',opus:'audio/ogg'};
@@ -539,15 +541,15 @@ async function restore(){
 }
 
 /* ---------- UI ---------- */
-function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'');d.setAttribute('role','option');d.innerHTML='<span>'+g.n+'</span><span class="cnt">'+avail(g.ids).length+'/'+g.ids.length+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw()};d.ondblclick=()=>{const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
+function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'');d.setAttribute('role','option');d.innerHTML='<span>'+g.n+'</span><span class="cnt">'+(g.empty?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw()};d.ondblclick=()=>{const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
 function drawR(){rl.innerHTML='';tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'');d.innerHTML='<span>'+(i<0?'Play All':byId[i].t)+'</span><span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>';d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
 function setTab(t){
- tab=(t+TABS.length)%TABS.length;const T=TABS[tab];G=T.G;sel=0;rsel=0;pane='L';
+ tab=(t+TABS.length)%TABS.length;const T=TABS[tab];G=curG();sel=0;rsel=0;pane='L';
  $('h1').textContent=T.h;$('dh').textContent=T.d;$('ds').textContent=T.sm;$('lbar').textContent=T.bar;
  TABS.forEach((_,k)=>$('tb'+k).classList.toggle('on',k==tab));draw();
 }
 TABS.forEach((_,k)=>$('tb'+k).onclick=()=>setTab(k));$('kl').onclick=()=>setTab(tab-1);$('kr').onclick=()=>setTab(tab+1);
-function draw(){$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
+function draw(){G=curG();if(sel>=G.length)sel=Math.max(0,G.length-1);$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
 function act(i){if(i<0){const a=avail(G[sel].ids);if(a.length)start(a);return}if(have(i))start([i])}
 function start(list,pos=0){q=list;qi=pos;qname=G[sel].n;load()}
 async function load(){
@@ -577,7 +579,7 @@ function side(d){if(d>0){if(pane=='L'){pane='R';draw()}else seek(10)}else{if(pan
 function enter(){if(pane=='L'){pane='R';draw();act(-1)}else act(tracks()[rsel])}
 function same(){const t=tracks()[rsel];return state!='stop'&&(t<0?qname===G[sel].n:t===q[qi])}
 function hasTracks(){return Object.keys(files).length>0}
-function openGate(){$('gate').classList.remove('hide');$('gmsg').textContent='';$('gmsg').className='';$('gx').hidden=!hasTracks()}
+function openGate(){$('gate').classList.remove('hide');$('gmsg').textContent='';$('gmsg').className='';$('gx').hidden=false}
 function closeGate(){$('gate').classList.add('hide')}
 const gateOpen=()=>!$('gate').classList.contains('hide');
 
@@ -587,7 +589,7 @@ const setInput=m=>{if(inp===m)return;inp=m;document.body.classList.toggle('kb',m
 addEventListener('pointerdown',()=>setInput('ptr'),{passive:true});
 addEventListener('pointermove',e=>{if(e.movementX||e.movementY)setInput('ptr')},{passive:true});
 addEventListener('keydown',e=>{
- if(gateOpen()){if(e.key=='Escape'&&hasTracks())closeGate();return}
+ if(gateOpen()){if(e.key=='Escape')closeGate();return}
  if(e.ctrlKey||e.metaKey||e.altKey)return;
  setInput('kb');
  const k=e.key;
@@ -612,7 +614,7 @@ function padStart(){const g=activePad();if(!g)return;padLabels(g.id);document.bo
 function padStop(){if(activePad())return;document.body.classList.remove('pad');cancelAnimationFrame(padRaf);padRaf=0;pHold={}}
 function padKey(n){
  setInput('pad');
- if(gateOpen()){if(n=='b'&&hasTracks())closeGate();return}
+ if(gateOpen()){if(n=='b')closeGate();return}
  switch(n){
   case'up':move(-1);break;case'down':move(1);break;
   case'left':side(-1);break;case'right':side(1);break;
