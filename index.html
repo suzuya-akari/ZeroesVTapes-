@@ -84,10 +84,21 @@ body.pad .pk{display:inline}body.pad .po{display:block}body.kb .kbh{display:bloc
 body:not(.pad):not(.kb) .foot{display:none}
 @supports(height:1dvh){:root{--u:min(1dvh,.5625vw)}@media (max-aspect-ratio:4/3){:root{--u:min(1dvh,.9vw)}}}
 #fs{display:none!important}
+.item .rm{align-self:center;opacity:.55;padding:0 .5em;cursor:pointer;flex:none}.item .rm:hover{opacity:1}
+.item.act{color:#fff}.item.dng{color:#d9a7a0}.pane.focus .item.sel.act,.pane.focus .item.sel.dng{color:#101313}
+#adlg{position:fixed;inset:0;z-index:55;display:grid;place-items:center;background:rgba(3,4,4,.92);padding:calc(4vmin + var(--sat)) calc(4vmin + var(--sar)) calc(4vmin + var(--sab)) calc(4vmin + var(--sal))}
+#adlg.hide{display:none}
+#adbox{width:min(92vw,460px);border:2px solid rgba(255,255,255,.35);padding:5vmin;text-align:center;background:rgba(20,24,24,.9);font-size:15px}
+#adbox h2{font-weight:400;letter-spacing:.14em;font-size:1.3em;margin-bottom:.8em}
+#adbox p{opacity:.75;font-size:.9em;line-height:1.5;margin-bottom:1em}
+#adbox input{width:100%;font:inherit;font-size:16px;letter-spacing:inherit;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);padding:.6em .7em;margin-bottom:1em;border-radius:2px;user-select:text;-webkit-user-select:text}
+#adbox .row{display:flex;gap:.6em;justify-content:center}#adbox button{padding:.6em 1.4em;font-size:1em}
 </style>
 </head>
 <body>
 <div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
+<div id="adlg" class="hide"><div id="adbox"><h2>NEW SOUNDTRACK ALBUM</h2><p>Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
+<input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
 <div id="bg"></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <div id="app"><div class="wrap">
@@ -115,7 +126,7 @@ body:not(.pad):not(.kb) .foot{display:none}
      <button id="bFf" title="Forward 10s (→)"><svg viewBox="0 0 24 24"><path d="M13 6v12l9-6zM2 6v12l9-6z"/></svg></button>
      <button id="bPv" title="Previous (B)"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
      <button id="bNx" title="Next (N)"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
-     <button id="bZip" title="Add more files"><svg viewBox="0 0 24 24"><path d="M12 3v12m0-12l-4 4m4-4l4 4M4 17v4h16v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>ADD FILES</button>
+     <button id="bZip" title="Add more files (adds to the selected album when one is open)"><svg viewBox="0 0 24 24"><path d="M12 3v12m0-12l-4 4m4-4l4 4M4 17v4h16v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>ADD FILES</button>
      <button id="bRp" title="Repeat (R)"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>REPEAT</button>
     </div>
    </div>
@@ -197,21 +208,68 @@ const all=a=>({n:a,ids:null,isAll:true});
 const TABS=[
  {hideMissing:true,h:"LISTEN TO TAPES",d:"Acquired Tapes",sm:"Listen to tapes acquired in the field.",bar:"CASSETTE TAPES",G:[{n:"Chico's Tapes",ids:rng(1,7)},{n:"Agent's Recording",ids:[8]},{n:"Mission Briefing",ids:rng(10,18)},{n:"Paz's Tapes",ids:rng(19,28)},all("All Tapes")]},
  {h:"LISTEN TO RECORDS",d:"Records",sm:"Communications and personal diary entries.",bar:"RECORDS",G:[{n:"Communications Records",ids:[29,30]},{n:"Paz's Diary",ids:[...rng(31,39),50]},all("All Records")]},
- {h:"LISTEN TO MUSIC",d:"Music",sm:"Optional. Add song files with ADD FILES. Songs with no built-in slot are added automatically from their mp3 tags.",bar:"SONGS",G:[{n:"Peace Walker Medley",ids:[41,42,43]},{n:"Peace Walker Soundtrack",ids:rng(51,64)},{n:"Other Songs",ids:[40,44,45,46,47,48,49]},all("All Songs")]}
+ {h:"LISTEN TO MUSIC",d:"Music",sm:"Optional. Add song files with ADD FILES, or create your own Soundtrack Album at the bottom of the list and add mp3 files to it.",bar:"SONGS",G:[{n:"Peace Walker Medley",ids:[41,42,43]},{n:"Peace Walker Soundtrack",ids:rng(51,64)},{n:"Other Songs",ids:[40,44,45,46,47,48,49]},all("All Songs"),{n:"+ New Soundtrack Album",ids:[],create:true}]}
 ];
 function rebuildAll(){TABS.forEach(T=>{const g=T.G.filter(x=>!x.isAll).flatMap(x=>x.ids);T.G.forEach(x=>{if(x.isAll)x.ids=g})})}
 rebuildAll();
 /* songs that match no built-in slot get their own slot (read from the mp3 tags) */
 const CUSTOM=[],CGROUP={n:"Added Songs",ids:CUSTOM};
 function regCustom(id,m){
- const title=m.title||'Untitled',t={id,n:title,t:(m.artist?m.artist+' - ':'')+title,custom:1,sig:m.sig,album:m.album||'',disc:m.disc||0,trk:m.trk||0,artist:m.artist||'',title};
+ const title=m.title||'Untitled',t={id,n:title,t:(m.artist?m.artist+' - ':'')+title,custom:1,alb:m.alb||'',sig:m.sig,album:m.album||'',disc:m.disc||0,trk:m.trk||0,artist:m.artist||'',title};
  const k=TR.findIndex(x=>x.id===id);if(k>=0)TR[k]=t;else TR.push(t);byId[id]=t;
- if(!CUSTOM.includes(id))CUSTOM.push(id);
+ if(m.alb){rebuildAll();return}if(!CUSTOM.includes(id))CUSTOM.push(id);
  CUSTOM.sort((a,b)=>{const x=byId[a],y=byId[b];return (x.album||'').localeCompare(y.album||'')||x.disc-y.disc||(x.trk||9999)-(y.trk||9999)||x.n.localeCompare(y.n)||a-b});
- const G2=TABS[2].G;if(!G2.includes(CGROUP))G2.splice(G2.length-1,0,CGROUP);
+ const G2=TABS[2].G;if(!G2.includes(CGROUP))G2.splice(G2.findIndex(x=>x.isAll),0,CGROUP);
  rebuildAll();
 }
-const nextCustomId=()=>Math.max(999,...CUSTOM)+1;
+const nextCustomId=()=>Math.max(999,...TR.map(t=>t.id))+1;
+/* ---------- Soundtrack Albums (user-made, shown in the Music list) ---------- */
+const ALBUMS=[];let curAlb='';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function syncAlbums(){const G2=TABS[2].G;for(let i=G2.length-1;i>=0;i--)if(G2[i].album)G2.splice(i,1);const at=G2.findIndex(x=>x.isAll);G2.splice(at<0?G2.length:at,0,...ALBUMS);rebuildAll()}
+const saveAlbums=()=>dbPut('albums',ALBUMS.map(a=>({key:a.key,n:a.n,ids:a.ids.slice()})));
+function purge(i){if(urls[i])URL.revokeObjectURL(urls[i]);delete urls[i];delete files[i];delete byId[i];const k=TR.findIndex(x=>x.id===i);if(k>=0)TR.splice(k,1);dbDel(i);dbDel('m:'+i)}
+function openAlbumDlg(){$('adlg').classList.remove('hide');$('adn').value='';setTimeout(()=>$('adn').focus(),50)}
+function closeAlbumDlg(){$('adlg').classList.add('hide')}
+function makeAlbum(){
+ const n=$('adn').value.trim().slice(0,60);if(!n)return;
+ const al={key:'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n,ids:[],album:true};
+ ALBUMS.push(al);syncAlbums();saveAlbums();closeAlbumDlg();
+ tab=2;setTab(2);sel=G.indexOf(al);if(sel<0)sel=0;rsel=0;pane='R';draw();
+ $('nt').textContent='Album "'+n+'" created. Press ADD FILES to add mp3s to it.';
+}
+function pickAlbumFiles(al){if(!al||!al.album)return;curAlb=al.key;$('ain').click()}
+async function addToAlbum(list){
+ const al=ALBUMS.find(a=>a.key===curAlb);if(!al)return;
+ const fl=list.filter(f=>audioName(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+ if(!fl.length){$('nt').textContent='No audio files found. Choose .mp3 files.';return}
+ let n=0,added=0;
+ for(const f of fl){
+  $('nt').textContent='Adding '+(++n)+' of '+fl.length+' to "'+al.n+'"...';
+  const meta=await readTags(f),title=meta.title||cleanName(f.name)||'Untitled',sig=f.name+'|'+f.size;
+  if(al.ids.some(i=>byId[i]&&byId[i].sig===sig))continue;
+  const ext=f.name.split('.').pop().toLowerCase(),blob=new Blob([f],{type:f.type||MIME[ext]||'audio/mpeg'}),id=nextCustomId();
+  const rec={title,artist:meta.artist||'',album:meta.album||'',disc:meta.disc,trk:meta.trk,sig,alb:al.key};
+  regCustom(id,rec);await dbPut('m:'+id,rec);await dbPut(id,blob);
+  urls[id]=URL.createObjectURL(blob);files[id]=true;al.ids.push(id);added++;await tick();
+ }
+ await saveAlbums();rebuildAll();
+ $('nt').textContent=added+' track'+(added==1?'':'s')+' added to "'+al.n+'".';
+ draw();
+}
+function removeTrack(i){
+ const al=G[sel];if(!al||!al.album)return;
+ if(state!='stop'&&q.includes(i)){stop();q=[];qi=-1}
+ al.ids=al.ids.filter(x=>x!==i);purge(i);saveAlbums();rebuildAll();
+ rsel=Math.min(rsel,Math.max(0,tracks().length-1));draw();
+}
+function delAlbum(al){
+ if(!al||!al.album)return;
+ if(!confirm('Delete album "'+al.n+'" and all its tracks from this device?'))return;
+ if(state!='stop'&&q.some(x=>al.ids.includes(x))){stop();q=[];qi=-1}
+ al.ids.slice().forEach(purge);ALBUMS.splice(ALBUMS.indexOf(al),1);syncAlbums();saveAlbums();
+ G=curG();sel=Math.min(sel,G.length-1);rsel=0;pane='L';draw();
+}
 let tab=0,G=TABS[0].G,qname='';
 const A=new Audio();A.preload="metadata";
 const $=id=>document.getElementById(id),ll=$('ll'),rl=$('rl');
@@ -221,7 +279,7 @@ const avail=ids=>ids.filter(have);
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const NOTAPES={n:'No tapes added yet',ids:[],empty:true};
 function curG(){const T=TABS[tab];if(!T.hideMissing)return T.G;const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[NOTAPES]}
-function tracks(){const g=G[sel];if(!g||g.empty)return[];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;return[-1,...ids]}
+function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-3];return[-1,...ids]}
 
 /* ---------- ZIP reading (no libraries) ---------- */
 const MIME={mp3:'audio/mpeg',m4a:'audio/mp4',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',opus:'audio/ogg'};
@@ -527,13 +585,17 @@ async function getUrl(id){return urls[id]}
 let _db=null;
 const dbOpen=()=>_db?Promise.resolve(_db):new Promise((res,rej)=>{try{const r=indexedDB.open('phantom-tapes',1);r.onupgradeneeded=()=>r.result.createObjectStore('t');r.onsuccess=()=>res(_db=r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
 async function dbPut(id,blob){try{const d=await dbOpen();await new Promise((res,rej)=>{const t=d.transaction('t','readwrite');t.objectStore('t').put(blob,id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(e){}}
+async function dbDel(id){try{const d=await dbOpen();await new Promise((res,rej)=>{const t=d.transaction('t','readwrite');t.objectStore('t').delete(id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(e){}}
 async function dbAll(){try{const d=await dbOpen();return await new Promise((res,rej)=>{const o={},t=d.transaction('t'),c=t.objectStore('t').openCursor();c.onsuccess=()=>{const x=c.result;if(x){o[x.key]=x.value;x.continue()}else res(o)};c.onerror=()=>rej(c.error)})}catch(e){return{}}}
 async function restore(){
  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
  const all=await dbAll();
+ if(Array.isArray(all.albums))all.albums.forEach(a=>{if(a&&a.key&&!ALBUMS.some(x=>x.key==a.key))ALBUMS.push({key:a.key,n:String(a.n||'Album'),ids:Array.isArray(a.ids)?a.ids.filter(Number.isFinite):[],album:true})});
  Object.keys(all).forEach(k=>{if(k.startsWith('m:')&&all[k]&&typeof all[k]==='object')regCustom(+k.slice(2),all[k])});
+ ALBUMS.forEach(a=>{a.ids=a.ids.filter(i=>byId[i]&&all[i] instanceof Blob)});
+ syncAlbums();
  const ids=Object.keys(all).map(Number).filter(i=>byId[i]&&all[i] instanceof Blob);
- if(!ids.length)return;
+ if(!ids.length){draw();return}
  ids.forEach(i=>{urls[i]=URL.createObjectURL(all[i]);files[i]=true});
  $('gate').classList.add('hide');
  $('nt').textContent=ids.length+' tracks on this device. Select a track.';
@@ -541,8 +603,8 @@ async function restore(){
 }
 
 /* ---------- UI ---------- */
-function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'');d.setAttribute('role','option');d.innerHTML='<span>'+g.n+'</span><span class="cnt">'+(g.empty?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw()};d.ondblclick=()=>{const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
-function drawR(){rl.innerHTML='';tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'');d.innerHTML='<span>'+(i<0?'Play All':byId[i].t)+'</span><span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>';d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
+function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'')+(g.create?' act':'');d.setAttribute('role','option');d.innerHTML='<span>'+esc(g.n)+'</span><span class="cnt">'+(g.empty||g.create?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw();if(g.create)openAlbumDlg()};d.ondblclick=()=>{if(g.create)return;const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
+function drawR(){rl.innerHTML='';const g=G[sel];tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'')+(i==-4?' act':'')+(i==-3?' dng':'');const lab=i==-1?'Play All':i==-3?'Delete this album':i==-4?'\uFF0B Create new Soundtrack Album':esc(byId[i].t);d.innerHTML='<span>'+lab+'</span>'+(i>=0?'<span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>':'');if(i>=0&&g&&g.album){const x=document.createElement('span');x.className='rm';x.title='Remove from album';x.textContent='\u2715';x.onclick=e=>{e.stopPropagation();removeTrack(i)};d.appendChild(x)}d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
 function setTab(t){
  tab=(t+TABS.length)%TABS.length;const T=TABS[tab];G=curG();sel=0;rsel=0;pane='L';
  $('h1').textContent=T.h;$('dh').textContent=T.d;$('ds').textContent=T.sm;$('lbar').textContent=T.bar;
@@ -550,7 +612,7 @@ function setTab(t){
 }
 TABS.forEach((_,k)=>$('tb'+k).onclick=()=>setTab(k));$('kl').onclick=()=>setTab(tab-1);$('kr').onclick=()=>setTab(tab+1);
 function draw(){G=curG();if(sel>=G.length)sel=Math.max(0,G.length-1);$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
-function act(i){if(i<0){const a=avail(G[sel].ids);if(a.length)start(a);return}if(have(i))start([i])}
+function act(i){const g=G[sel];if(i===-4||(g&&g.create)){openAlbumDlg();return}if(i===-2){pickAlbumFiles(g);return}if(i===-3){delAlbum(g);return}if(i<0){const a=avail(g.ids);if(a.length)start(a);return}if(have(i))start([i])}
 function start(list,pos=0){q=list;qi=pos;qname=G[sel].n;load()}
 async function load(){
  const i=q[qi],my=++tok;
@@ -580,8 +642,8 @@ function enter(){if(pane=='L'){pane='R';draw();act(-1)}else act(tracks()[rsel])}
 function same(){const t=tracks()[rsel];return state!='stop'&&(t<0?qname===G[sel].n:t===q[qi])}
 function hasTracks(){return Object.keys(files).length>0}
 function openGate(){$('gate').classList.remove('hide');$('gmsg').textContent='';$('gmsg').className='';$('gx').hidden=false}
-function closeGate(){$('gate').classList.add('hide')}
-const gateOpen=()=>!$('gate').classList.contains('hide');
+function closeGate(){$('gate').classList.add('hide');$('adlg').classList.add('hide')}
+const gateOpen=()=>!$('gate').classList.contains('hide')||!$('adlg').classList.contains('hide');
 
 /* ---------- input detection: hints show only for the device in use ---------- */
 let inp='';
@@ -644,7 +706,10 @@ addEventListener('gamepaddisconnected',()=>setTimeout(padStop,0));
 /* ---------- audio.zip gate ---------- */
 const zin=$('zin');
 $('gbtn').onclick=()=>zin.click();
-$('bZip').onclick=openGate;$('gx').onclick=closeGate;
+$('ain').onchange=()=>{const l=Array.from($('ain').files);$('ain').value='';if(l.length)addToAlbum(l)};
+$('adok').onclick=makeAlbum;$('adno').onclick=closeAlbumDlg;
+$('adn').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();makeAlbum()}else if(e.key=='Escape'){e.preventDefault();closeAlbumDlg()}};
+$('bZip').onclick=()=>{const g=G[sel];if(tab==2&&g&&g.album)pickAlbumFiles(g);else openGate()};$('gx').onclick=closeGate;
 zin.onchange=()=>{if(zin.files.length)loadZip(Array.from(zin.files));zin.value=''};
 addEventListener('dragover',e=>{e.preventDefault();$('gdrop').classList.add('over')});
 addEventListener('dragleave',e=>{if(!e.relatedTarget)$('gdrop').classList.remove('over')});
