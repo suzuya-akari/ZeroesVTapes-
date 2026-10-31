@@ -1014,14 +1014,14 @@ async function exportMusic(everything){
 }
 
 /* ---------- Customization ---------- */
-const DEF={bgm:'default',bg1:'#0b0e0e',bg2:'#1c2b26',ang:160,bri:80,blur:0,dim:0,vig:1,scan:0,covbg:0,ink:'#e9ecea',bar:'#d9dcda',sel:'#e6e9e7',acc:'#ffffff',panel:'#080a0a',pan:78,font:'default',fsz:100,ls:4,shell:'#16191a',label:'#e8eae3',stripe:'#3f9a62',lblink:'#333333',reel:'#d8dad5',brand:'SONY',model:'BHF 46',line2:'Cuba, 1975',spin:1,lyr:0,lymode:'sub',lypos:'bottom',lybox:1,lysz:100,lyoff:0};
+const DEF={bgm:'default',bg1:'#0b0e0e',bg2:'#1c2b26',ang:160,bri:80,blur:0,dim:0,vig:1,scan:0,covbg:0,ink:'#e9ecea',bar:'#d9dcda',sel:'#e6e9e7',acc:'#ffffff',panel:'#080a0a',pan:78,font:'default',fsz:100,ls:4,shell:'#16191a',label:'#e8eae3',stripe:'#3f9a62',lblink:'#333333',reel:'#d8dad5',brand:'SONY',model:'BHF 46',line2:'Cuba, 1975',spin:1,lyr:0,lymode:'sub',lypos:'bottom',lybox:1,lysz:100,lyoff:0,awake:0};
 const ST={...DEF};let bgUrl='',curCoverUrl='',hadLS=false;
 try{const s=localStorage.getItem('zvt-settings');if(s){Object.assign(ST,JSON.parse(s));hadLS=true}}catch(e){}
 const FONTS={default:'"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif',mono:'"Courier New",ui-monospace,monospace',serif:'Georgia,"Times New Roman",serif',round:'ui-rounded,"Trebuchet MS",system-ui,sans-serif',hand:'"Segoe Print","Bradley Hand","Comic Sans MS",cursive'};
 const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
 const shade=(h,f)=>{const n=parseInt(h.slice(1),16),c=x=>Math.round(x*f).toString(16).padStart(2,'0');return'#'+c(n>>16)+c(n>>8&255)+c(n&255)};
 const PRESETS={
- 'Peace Walker':(({lyr,lymode,lypos,lybox,lysz,lyoff,...r})=>r)(DEF),
+ 'Peace Walker':(({lyr,lymode,lypos,lybox,lysz,lyoff,awake,...r})=>r)(DEF),
  'Mother Base':{ink:'#dff5e6',bar:'#9fd6b0',sel:'#cdeed8',acc:'#6fe39b',panel:'#04120a',stripe:'#2f8f5a',bgm:'grad',bg1:'#03150c',bg2:'#0b3a22',ang:160},
  'Outer Heaven':{ink:'#ffe6c7',bar:'#f0a64a',sel:'#ffd9a0',acc:'#ff9a2e',panel:'#140a02',stripe:'#c8741a',bgm:'grad',bg1:'#1a0d02',bg2:'#4a2406',ang:160},
  'Midnight':{ink:'#e3ecff',bar:'#9db8f0',sel:'#cfe0ff',acc:'#6aa2ff',panel:'#050a18',stripe:'#3d6fd1',bgm:'grad',bg1:'#040814',bg2:'#12265a',ang:160},
@@ -1051,6 +1051,7 @@ function applySettings(){
  $('cBrand').textContent=s.brand;$('cModel').textContent=s.model;$('lb2').textContent=s.line2;
  $('bgd').style.background='rgba(0,0,0,'+s.dim/100+')';
  applyBg();updLyr(true);
+ try{wakeSync()}catch(e){}
 }
 let svT=0;
 function saveSettings(){try{localStorage.setItem('zvt-settings',JSON.stringify(ST))}catch(e){}clearTimeout(svT);svT=setTimeout(()=>dbPut('settings',{...ST}),400)}
@@ -1065,7 +1066,8 @@ const SECT=[
  ['Colors',[['ink','color','Text'],['bar','color','Header bars'],['sel','color','Highlight'],['acc','color','Accent (progress, tabs)'],['panel','color','Panel color'],['pan','range','Panel opacity',20,100,2,'%']]],
  ['Cassette',[['shell','color','Shell'],['label','color','Label paper'],['stripe','color','Label stripe'],['lblink','color','Label ink'],['reel','color','Reels'],['brand','text','Brand text'],['model','text','Model text'],['line2','text','Label line 2']]],
  ['Text',[['font','select','Font',[['default','Classic'],['mono','Typewriter'],['serif','Serif'],['round','Rounded'],['hand','Handwritten']]],['fsz','range','Text size',80,130,5,'%'],['ls','range','Letter spacing',0,20,1,'']]],
- ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels']]]
+ ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels']]],
+ ['Power',[['awake','check','Keep screen awake while playing']]]
 ];
 function buildPanel(){
  const body=$('thbody'),keep=body.scrollTop;body.innerHTML='';
@@ -1108,7 +1110,7 @@ function buildPanel(){
 /* ---------- Theme export / import ---------- */
 let thMsg='';
 const thIn=document.createElement('input');thIn.type='file';thIn.id='thin';thIn.accept='.json,.zvtheme,application/json';thIn.hidden=true;document.body.appendChild(thIn);
-const THEME_SKIP={lyr:1};
+const THEME_SKIP={lyr:1,awake:1};
 function themeFields(){const m={};SECT.forEach(([t,fs])=>fs.forEach(f=>{if(f[0][0]!=='@'&&!THEME_SKIP[f[0]])m[f[0]]=f}));return m}
 function cleanTheme(src){
  const out={},F=themeFields();
@@ -1229,6 +1231,20 @@ async function autoLy(id){
   if(m.lyrics&&m.lyrics.trim()&&LY[id]===undefined){LY[id]=m.lyrics;await dbPut('lyr:'+id,m.lyrics);lyKey='';updLyr(true)}}catch(e){}
 }
 function lyScroll(){lyTick()}
+/* ---------- Anti-sleep: Screen Wake Lock (phones, tablets, Windows/Mac/Linux browsers) ---------- */
+let wlock=null,wlBusy=false;
+async function wakeSync(){
+ if(wlBusy||!('wakeLock' in navigator))return;
+ const want=!!ST.awake&&!A.paused&&!A.ended&&document.visibilityState==='visible';
+ if(want&&!wlock){
+  wlBusy=true;
+  try{wlock=await navigator.wakeLock.request('screen');wlock.addEventListener('release',()=>{wlock=null})}catch(e){wlock=null}
+  wlBusy=false;
+ }else if(!want&&wlock){const l=wlock;wlock=null;try{await l.release()}catch(e){}}
+}
+['play','playing','pause','ended','emptied'].forEach(ev=>A.addEventListener(ev,wakeSync));
+document.addEventListener('visibilitychange',wakeSync);
+setInterval(wakeSync,3000);
 $('lyr').addEventListener('click',e=>{
  const d=e.target.closest('#lyr>div');if(!d||!lyCache||!lyCache.synced)return;
  if(String(getSelection()).length)return;
