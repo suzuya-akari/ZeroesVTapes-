@@ -241,7 +241,7 @@ const rng=(a,b)=>TR.map(t=>t.id).filter(i=>i>=a&&i<=b);
 const all=a=>({n:a,ids:null,isAll:true});
 const TABS=[
  {hideMissing:true,h:"LISTEN TO TAPES",d:"Acquired Tapes",sm:"Listen to tapes acquired in the field.",bar:"CASSETTE TAPES",G:[{n:"Chico's Tapes",ids:rng(1,7)},{n:"Agent's Recording",ids:[8]},{n:"Mission Briefing",ids:rng(10,18)},{n:"Paz's Tapes",ids:rng(19,28)},all("All Tapes")]},
- {h:"LISTEN TO RECORDS",d:"Records",sm:"Communications and personal diary entries.",bar:"RECORDS",G:[{n:"Communications Records",ids:[29,30]},{n:"Paz's Diary",ids:[...rng(31,39),50]},all("All Records")]},
+ {hideMissing:true,h:"LISTEN TO RECORDS",d:"Records",sm:"Communications and personal diary entries.",bar:"RECORDS",G:[{n:"Communications Records",ids:[29,30]},{n:"Paz's Diary",ids:[...rng(31,39),50]},all("All Records")]},
  {h:"LISTEN TO MUSIC",d:"Music",sm:"Optional. Add song files with ADD FILES, or create your own Soundtrack Album at the bottom of the list and add mp3 files to it.",bar:"SONGS",G:[{n:"Peace Walker Medley",ids:[41,42,43],hideEmpty:true},{n:"Peace Walker Soundtrack",ids:rng(51,64),hideEmpty:true},{n:"Other Songs",ids:[40,44,45,46,47,48,49]},all("All Songs"),{n:"+ New Soundtrack Album",ids:[],create:true}]}
 ];
 function rebuildAll(){TABS.forEach(T=>{const g=T.G.filter(x=>!x.isAll).flatMap(x=>x.ids);T.G.forEach(x=>{if(x.isAll)x.ids=g})})}
@@ -313,9 +313,9 @@ let sel=0,rsel=0,pane='L',q=[],qi=-1,rep=false,state='stop',zip=null,files={},ur
 const have=i=>!!files[i];
 const avail=ids=>ids.filter(have);
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
-const NOTAPES={n:'No tapes added yet',ids:[],empty:true};
-function curG(){const T=TABS[tab];if(!T.hideMissing)return T.G.filter(x=>!x.hideEmpty||avail(x.ids).length);const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[NOTAPES]}
-function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-5,...(g.cover?[-7]:[]),-6,-3];return[-1,...ids]}
+const NOTAPES={n:'No tapes added yet',ids:[],empty:true},NOREC={n:'No records added yet',ids:[],empty:true};
+function curG(){const T=TABS[tab];if(tab==2)return T.G.filter(x=>x.album||x.create||avail(x.ids).length);const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[tab==1?NOREC:NOTAPES]}
+function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=(TABS[tab].hideMissing||tab==2)?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-5,...(g.cover?[-7]:[]),-6,-3];return[-1,...ids]}
 
 /* ---------- ZIP reading (no libraries) ---------- */
 const MIME={mp3:'audio/mpeg',m4a:'audio/mp4',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',opus:'audio/ogg'};
