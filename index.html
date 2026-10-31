@@ -93,20 +93,53 @@ body:not(.pad):not(.kb) .foot{display:none}
 #adbox p{opacity:.75;font-size:.9em;line-height:1.5;margin-bottom:1em}
 #adbox input{width:100%;font:inherit;font-size:16px;letter-spacing:inherit;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);padding:.6em .7em;margin-bottom:1em;border-radius:2px;user-select:text;-webkit-user-select:text}
 #adbox .row{display:flex;gap:.6em;justify-content:center}#adbox button{padding:.6em 1.4em;font-size:1em}
+html,body{font-family:var(--ff,"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif);letter-spacing:var(--ls,.04em)}
+body{font-size:calc(var(--u)*2.5*var(--fsz,1))}
+@media (max-aspect-ratio:4/3){body{font-size:calc(var(--u)*2*var(--fsz,1))}}
+.item.sel{border-left-color:var(--acc,#fff)}
+.track i,#gprog i{background:var(--acc,#fff)}
+.tab.on{background:var(--tabc,#7d8381)}
+button.on{background:var(--sel,#e6e9e7)}
+.reel circle{fill:var(--reel,#d8dad5)}
+#lb1,#lb2{fill:var(--lblink,#333)}
+body.novig #bg::after{display:none}
+body.nospin .reel{animation:none}
+#bgd{position:fixed;inset:0;pointer-events:none}
+#scan{display:none;position:fixed;inset:0;z-index:70;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+body.scan #scan{display:block}
+.th{width:1.7em;height:1.7em;object-fit:cover;vertical-align:middle;margin-right:.55em;border-radius:2px}
+#dcov{display:none;float:right;width:calc(var(--u)*10);height:calc(var(--u)*10);object-fit:cover;margin:0 0 .4em .8em;border:1px solid rgba(255,255,255,.3)}
+.gex{display:flex;gap:.6em;justify-content:center;flex-wrap:wrap;margin-top:.9em}.gex button{margin:0!important}
+.gnote{margin-top:1.1em;font-size:.8em;opacity:.65;line-height:1.5}
+#thm{position:fixed;inset:0;z-index:56;display:grid;place-items:center;background:rgba(3,4,4,.8);padding:calc(3vmin + var(--sat)) calc(3vmin + var(--sar)) calc(3vmin + var(--sab)) calc(3vmin + var(--sal))}
+#thm.hide{display:none}
+#thbox{width:min(94vw,540px);max-height:88vh;max-height:88dvh;display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.35);padding:4vmin;background:rgba(20,24,24,.97);font-size:14px}
+#thbox h2{font-weight:400;letter-spacing:.14em;font-size:1.3em;margin-bottom:.4em;text-align:center}
+#thbody{overflow:auto;overscroll-behavior:contain;flex:1;min-height:0;padding-right:.4em;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.ths{font-size:.78em;letter-spacing:.16em;opacity:.7;margin:1.2em 0 .4em;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:.2em}
+.thr{display:flex;align-items:center;justify-content:space-between;gap:.8em;margin:.5em 0}.thr label{flex:none}
+.thr .rg{display:flex;align-items:center;gap:.6em;flex:1;justify-content:flex-end}.thr .rg input{flex:1;min-width:0;max-width:200px}.thr .rg span{min-width:3.4em;text-align:right;opacity:.75;font-size:.9em}
+.thr input[type=color]{width:3.2em;height:2em;padding:0;border:1px solid rgba(255,255,255,.4);background:none;cursor:pointer}
+.thr input[type=text],.thr select{font:inherit;font-size:16px;letter-spacing:inherit;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);padding:.3em .5em;border-radius:2px;max-width:55%;user-select:text;-webkit-user-select:text}
+.thr input[type=range]{accent-color:var(--acc,#fff)}.thr select option{background:#1a1e1e;color:#e9ecea}.thr input[type=checkbox]{width:1.4em;height:1.4em;accent-color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:.5em}.chips button{padding:.4em .8em}
+#thbox .row{display:flex;gap:.6em;justify-content:center;margin-top:1em}#thbox .row button{padding:.6em 1.4em;font-size:1em}
 </style>
 </head>
 <body>
-<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
-<div id="adlg" class="hide"><div id="adbox"><h2>NEW SOUNDTRACK ALBUM</h2><p>Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
+<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><div class="gex"><button id="gexp">EXPORT MUSIC</button><button id="gexa">EXPORT ALL AUDIO</button></div><p class="gnote">Export saves your songs, Soundtrack Albums and cover art into one zip you can back up, move to another device, or import again here.</p><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
+<div id="adlg" class="hide"><div id="adbox"><h2 id="adt">NEW SOUNDTRACK ALBUM</h2><p id="adp">Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
 <input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
-<div id="bg"></div>
+<div id="bg"></div><div id="bgd"></div><div id="scan"></div>
+<input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden>
+<div id="thm" class="hide"><div id="thbox"><h2>CUSTOMIZE</h2><div id="thbody"></div><div class="row"><button id="thrs">RESET</button><button id="thok">DONE</button></div></div></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <div id="app"><div class="wrap">
 <h1 id="h1">LISTEN TO TAPES</h1>
 <div class="tabs"><span class="key pk" id="kl" data-pk="LT" style="cursor:pointer">LT</span><div class="tab on" id="tb0" title="Tapes"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div><div class="tab" id="tb1" title="Records"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="16"/><path d="M9 9h6M9 13h6"/></svg></div><div class="tab" id="tb2" title="Music"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/></svg></div><span class="key pk" id="kr" data-pk="RT" style="cursor:pointer">RT</span></div>
 <div class="cols">
  <section class="pane left focus" id="pl">
-  <div class="desc"><b id="dh">Acquired Tapes</b><small id="ds">Listen to tapes acquired in the field.</small></div>
+  <div class="desc"><img id="dcov" alt=""><b id="dh">Acquired Tapes</b><small id="ds">Listen to tapes acquired in the field.</small></div>
   <div class="bar" id="lbar">CASSETTE TAPES</div>
   <div class="list" id="ll" role="listbox" aria-label="Cassette tapes"></div>
  </section>
@@ -115,7 +148,7 @@ body:not(.pad):not(.kb) .foot{display:none}
    <div class="bar">SELECTED CASSETTE TAPE</div>
    <div class="player" id="player">
     <div class="np">
-     <svg class="cas" viewBox="0 0 200 128" aria-hidden="true"><rect x="2" y="2" width="196" height="124" rx="8" fill="#16191a" stroke="#555a58" stroke-width="2"/><rect x="14" y="12" width="172" height="62" rx="4" fill="#e8eae3"/><rect x="14" y="12" width="172" height="14" fill="#3f9a62"/><text x="22" y="23" font-size="9" fill="#fff" font-family="Arial" font-weight="700">SONY</text><text x="164" y="23" font-size="8" fill="#fff" font-family="Arial">BHF 46</text><text id="lb1" x="22" y="46" font-size="9" fill="#333" font-family="cursive" font-style="italic">ZeroesVTapes</text><text id="lb2" x="22" y="60" font-size="9" fill="#333" font-family="cursive" font-style="italic">Cuba, 1975</text><rect x="40" y="82" width="120" height="30" rx="14" fill="#0c0e0e" stroke="#444"/><g class="reel"><circle cx="64" cy="97" r="11" fill="#d8dad5"/><path d="M64 87v20M54 97h20M57 90l14 14M71 90L57 104" stroke="#111" stroke-width="2.4"/></g><g class="reel"><circle cx="136" cy="97" r="11" fill="#d8dad5"/><path d="M136 87v20M126 97h20M129 90l14 14M143 90l-14 14" stroke="#111" stroke-width="2.4"/></g></svg>
+     <svg class="cas" viewBox="0 0 200 128" aria-hidden="true"><rect id="cShell" x="2" y="2" width="196" height="124" rx="8" fill="#16191a" stroke="#555a58" stroke-width="2"/><rect id="cLabel" x="14" y="12" width="172" height="62" rx="4" fill="#e8eae3"/><rect id="cStripe" x="14" y="12" width="172" height="14" fill="#3f9a62"/><text id="cBrand" x="22" y="23" font-size="9" fill="#fff" font-family="Arial" font-weight="700">SONY</text><text id="cModel" x="164" y="23" font-size="8" fill="#fff" font-family="Arial" text-anchor="end" transform="translate(16 0)">BHF 46</text><text id="lb1" x="22" y="46" font-size="9" fill="#333" font-family="cursive" font-style="italic">ZeroesVTapes</text><text id="lb2" x="22" y="60" font-size="9" fill="#333" font-family="cursive" font-style="italic">Cuba, 1975</text><clipPath id="cclip"><rect x="132" y="30" width="46" height="40" rx="3"/></clipPath><image id="lbimg" x="132" y="30" width="46" height="40" preserveAspectRatio="xMidYMid slice" clip-path="url(#cclip)" style="display:none"/><rect x="40" y="82" width="120" height="30" rx="14" fill="#0c0e0e" stroke="#444"/><g class="reel"><circle cx="64" cy="97" r="11" fill="#d8dad5"/><path d="M64 87v20M54 97h20M57 90l14 14M71 90L57 104" stroke="#111" stroke-width="2.4"/></g><g class="reel"><circle cx="136" cy="97" r="11" fill="#d8dad5"/><path d="M136 87v20M126 97h20M129 90l14 14M143 90l-14 14" stroke="#111" stroke-width="2.4"/></g></svg>
      <div><div class="t1" id="nl">ZeroesVTapes</div><div class="t2" id="nt">Load your audio files to begin</div>
       <div class="prog"><div class="track" id="bar" role="slider" aria-label="Seek" tabindex="0"><i id="fill"></i></div><span class="time" id="tm">00:00/00:00</span></div></div>
     </div>
@@ -127,6 +160,7 @@ body:not(.pad):not(.kb) .foot{display:none}
      <button id="bPv" title="Previous (B)"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
      <button id="bNx" title="Next (N)"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
      <button id="bZip" title="Add more files (adds to the selected album when one is open)"><svg viewBox="0 0 24 24"><path d="M12 3v12m0-12l-4 4m4-4l4 4M4 17v4h16v-4" fill="none" stroke="currentColor" stroke-width="2"/></svg>ADD FILES</button>
+     <button id="bSet" title="Customize theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.7 0 2-1 1.4-2-.6-1-.2-2.2 1-2.2H17a4 4 0 004-4c0-5-4-9.8-9-9.8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="11" r="1.4"/><circle cx="12" cy="7.5" r="1.4"/><circle cx="16" cy="11" r="1.4"/></svg>THEME</button>
      <button id="bRp" title="Repeat (R)"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zM17 17H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>REPEAT</button>
     </div>
    </div>
@@ -229,10 +263,12 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function syncAlbums(){const G2=TABS[2].G;for(let i=G2.length-1;i>=0;i--)if(G2[i].album)G2.splice(i,1);const at=G2.findIndex(x=>x.isAll);G2.splice(at<0?G2.length:at,0,...ALBUMS);rebuildAll()}
 const saveAlbums=()=>dbPut('albums',ALBUMS.map(a=>({key:a.key,n:a.n,ids:a.ids.slice()})));
 function purge(i){if(urls[i])URL.revokeObjectURL(urls[i]);delete urls[i];delete files[i];delete byId[i];const k=TR.findIndex(x=>x.id===i);if(k>=0)TR.splice(k,1);dbDel(i);dbDel('m:'+i)}
-function openAlbumDlg(){$('adlg').classList.remove('hide');$('adn').value='';setTimeout(()=>$('adn').focus(),50)}
+let adMode='new',adKey='';
+function openAlbumDlg(al){adMode=al?'ren':'new';adKey=al?al.key:'';$('adt').textContent=al?'RENAME ALBUM':'NEW SOUNDTRACK ALBUM';$('adp').textContent=al?'Enter a new name for this album.':'Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.';$('adok').textContent=al?'SAVE':'CREATE';$('adlg').classList.remove('hide');$('adn').value=al?al.n:'';setTimeout(()=>$('adn').focus(),50)}
 function closeAlbumDlg(){$('adlg').classList.add('hide')}
 function makeAlbum(){
  const n=$('adn').value.trim().slice(0,60);if(!n)return;
+ if(adMode=='ren'){const a=ALBUMS.find(x=>x.key===adKey);if(a){a.n=n;saveAlbums();closeAlbumDlg();draw()}return}
  const al={key:'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n,ids:[],album:true};
  ALBUMS.push(al);syncAlbums();saveAlbums();closeAlbumDlg();
  tab=2;setTab(2);sel=G.indexOf(al);if(sel<0)sel=0;rsel=0;pane='R';draw();
@@ -267,7 +303,7 @@ function delAlbum(al){
  if(!al||!al.album)return;
  if(!confirm('Delete album "'+al.n+'" and all its tracks from this device?'))return;
  if(state!='stop'&&q.some(x=>al.ids.includes(x))){stop();q=[];qi=-1}
- al.ids.slice().forEach(purge);ALBUMS.splice(ALBUMS.indexOf(al),1);syncAlbums();saveAlbums();
+ al.ids.slice().forEach(purge);setAlbumCover(al,null);ALBUMS.splice(ALBUMS.indexOf(al),1);syncAlbums();saveAlbums();refreshCover();
  G=curG();sel=Math.min(sel,G.length-1);rsel=0;pane='L';draw();
 }
 let tab=0,G=TABS[0].G,qname='';
@@ -279,7 +315,7 @@ const avail=ids=>ids.filter(have);
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const NOTAPES={n:'No tapes added yet',ids:[],empty:true};
 function curG(){const T=TABS[tab];if(!T.hideMissing)return T.G.filter(x=>!x.hideEmpty||avail(x.ids).length);const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[NOTAPES]}
-function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-3];return[-1,...ids]}
+function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=TABS[tab].hideMissing?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-5,...(g.cover?[-7]:[]),-6,-3];return[-1,...ids]}
 
 /* ---------- ZIP reading (no libraries) ---------- */
 const MIME={mp3:'audio/mpeg',m4a:'audio/mp4',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',opus:'audio/ogg'};
@@ -462,7 +498,8 @@ function matchId(name){
  const base=name.split(/[\\/]/).pop();
  if(!base||base.startsWith('.')||name.includes('__MACOSX'))return null;
  const ext=base.split('.').pop().toLowerCase();if(!MIME[ext])return null;
- let m=base.match(/paz[^a-z0-9]*s?[^a-z0-9]*report[^0-9]*([1-9])(?!\d)/i);if(m)return 19+ +m[1];
+ let m=base.match(/^\[#(\d{1,3})\]/);if(m&&byId[+m[1]]&&!byId[+m[1]].custom)return +m[1];
+ m=base.match(/paz[^a-z0-9]*s?[^a-z0-9]*report[^0-9]*([1-9])(?!\d)/i);if(m)return 19+ +m[1];
  m=base.match(/communications?[^a-z0-9]*records?[^0-9]*([12])(?!\d)/i);if(m)return 28+ +m[1];
  m=base.match(/paz[^a-z0-9]*s?[^a-z0-9]*(10|[1-9])(?:st|nd|rd|th)[^a-z0-9]*diary/i);if(m)return +m[1]==10?50:30+ +m[1];
  const SONG=[[/^(?!.*medley).*heavens?[^a-z0-9]*s?[^a-z0-9]*divide/i,51],[/koi[^a-z0-9]*no[^a-z0-9]*yokushiryoku/i,52],[/shou?wa[^a-z0-9]*blues/i,53],[/minato[^a-z0-9]*no[^a-z0-9]*yoko/i,54],[/prologue/i,55],[/suicide[^a-z0-9]*over[^a-z0-9]*betrayal/i,56],[/reflections/i,57],[/i[^a-z0-9]*ve[^a-z0-9]*been[^a-z0-9]*waiting/i,58],[/venceremos/i,59],[/v[^a-z0-9]*for[^a-z0-9]*victory/i,60],[/hasta[^a-z0-9]*la[^a-z0-9]*victoria/i,61],[/basilisco/i,62],[/zadornov/i,63],[/love[^a-z0-9]*is[^a-z0-9]*blind/i,64],[/beyond[^a-z0-9]*the[^a-z0-9]*bounds/i,40],[/heavens?[^a-z0-9]*s?[^a-z0-9]*divide/i,41],[/love[^a-z0-9]*deterrence/i,42],[/pw[^a-z0-9]*theme/i,43],[/ride[^a-z0-9]*of[^a-z0-9]*the[^a-z0-9]*valkyries/i,44],[/here[^a-z0-9]*s[^a-z0-9]*to[^a-z0-9]*you/i,45],[/resurgence/i,46],[/theme[^a-z0-9]*of[^a-z0-9]*tara/i,47],[/ambushed/i,48],[/pleasure[^a-z0-9]*of[^a-z0-9]*tension/i,49]];
@@ -531,7 +568,9 @@ async function loadZip(input){
  const list=Array.from(input.length!==undefined&&!input.name?input:[input]);openGate();
  const msg=$('gmsg'),pg=$('gprog'),bar=$('gbar');msg.className='';msg.textContent='Reading files...';pg.style.display='block';bar.style.width='0';
  try{
-  const jobs=[],mk=(name,x)=>{const id=matchId(name);if(id)jobs.push({...x,name,id,rank:0});else if(audioName(name)){const w=matchNum(name);jobs.push({...x,name,weak:w,rank:w?1:2})}};
+  const jobs=[],mk=(name,x)=>{const am=name.replace(/\\/g,'/').match(/(?:^|\/)Soundtrack Albums\/([^\/]+)\/([^\/]+)$/i);
+   if(am){if(audioName(name))jobs.push({...x,name,alb:am[1],rank:3});else if(/\.(jpe?g|png|webp|gif)$/i.test(am[2]))jobs.push({...x,name,albCover:am[1],rank:4});return}
+   const id=matchId(name);if(id)jobs.push({...x,name,id,rank:0});else if(audioName(name)){const w=matchNum(name);jobs.push({...x,name,weak:w,rank:w?1:2})}};
   for(const file of list){
    if(isArc(file)){
     const mg=new Uint8Array(await file.slice(0,6).arrayBuffer());const is7z=mg[0]===0x37&&mg[1]===0x7A&&mg[2]===0xBC&&mg[3]===0xAF;
@@ -550,6 +589,7 @@ async function loadZip(input){
    let blob;
    if(j.direct)blob=j.direct;
    else{zip=j.file;blob=await(j.is7z?extract7z(j.e):extract(j.e))}
+   if(j.alb||j.albCover){await importAlbumItem(j,blob,nu,nf);done++;bar.style.width=(done/total*100)+'%';await tick();continue}
    let id=j.id||0,meta=null;
    if(id&&taken[id])id=0;                       /* duplicate name: do not overwrite, give it a slot */
    if(!id){
@@ -573,6 +613,7 @@ async function loadZip(input){
    if(nu[id])URL.revokeObjectURL(nu[id]);await dbPut(id,blob);nu[id]=URL.createObjectURL(blob);nf[id]=true;
    done++;bar.style.width=(done/total*100)+'%';await tick();
   }
+  if(albDirty){albDirty=false;syncAlbums();await saveAlbums()}
   urls=nu;files=nf;zip=null;
   $('gate').classList.add('hide');pg.style.display='none';msg.textContent='';
   const n=Object.keys(nf).length;
@@ -593,6 +634,10 @@ async function restore(){
  if(Array.isArray(all.albums))all.albums.forEach(a=>{if(a&&a.key&&!ALBUMS.some(x=>x.key==a.key))ALBUMS.push({key:a.key,n:String(a.n||'Album'),ids:Array.isArray(a.ids)?a.ids.filter(Number.isFinite):[],album:true})});
  Object.keys(all).forEach(k=>{if(k.startsWith('m:')&&all[k]&&typeof all[k]==='object')regCustom(+k.slice(2),all[k])});
  ALBUMS.forEach(a=>{a.ids=a.ids.filter(i=>byId[i]&&all[i] instanceof Blob)});
+ ALBUMS.forEach(a=>{const cb=all['cover:'+a.key];if(cb instanceof Blob)a.cover=URL.createObjectURL(cb)});
+ if(!hadLS&&all.settings&&typeof all.settings==='object')Object.assign(ST,all.settings);
+ if(all.bgimg instanceof Blob)bgUrl=URL.createObjectURL(all.bgimg);
+ applySettings();
  syncAlbums();
  const ids=Object.keys(all).map(Number).filter(i=>byId[i]&&all[i] instanceof Blob);
  if(!ids.length){draw();return}
@@ -603,21 +648,22 @@ async function restore(){
 }
 
 /* ---------- UI ---------- */
-function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'')+(g.create?' act':'');d.setAttribute('role','option');d.innerHTML='<span>'+esc(g.n)+'</span><span class="cnt">'+(g.empty||g.create?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw();if(g.create)openAlbumDlg()};d.ondblclick=()=>{if(g.create)return;const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
-function drawR(){rl.innerHTML='';const g=G[sel];tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'')+(i==-4?' act':'')+(i==-3?' dng':'');const lab=i==-1?'Play All':i==-3?'Delete this album':i==-4?'\uFF0B Create new Soundtrack Album':esc(byId[i].t);d.innerHTML='<span>'+lab+'</span>'+(i>=0?'<span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>':'');if(i>=0&&g&&g.album){const x=document.createElement('span');x.className='rm';x.title='Remove from album';x.textContent='\u2715';x.onclick=e=>{e.stopPropagation();removeTrack(i)};d.appendChild(x)}d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
+function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'')+(g.create?' act':'');d.setAttribute('role','option');d.innerHTML='<span>'+(g.cover?'<img class="th" src="'+g.cover+'" alt="">':'')+esc(g.n)+'</span><span class="cnt">'+(g.empty||g.create?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw();if(g.create)openAlbumDlg()};d.ondblclick=()=>{if(g.create)return;const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
+function drawR(){rl.innerHTML='';const g=G[sel];tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'')+(i==-4?' act':'')+(i==-3?' dng':'');const lab=i==-1?'Play All':i==-3?'Delete this album':i==-4?'\uFF0B Create new Soundtrack Album':i==-5?(g.cover?'Change cover art':'Set cover art'):i==-6?'Rename album':i==-7?'Remove cover art':esc(byId[i].t);d.innerHTML='<span>'+lab+'</span>'+(i>=0?'<span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>':'');if(i>=0&&g&&g.album){const x=document.createElement('span');x.className='rm';x.title='Remove from album';x.textContent='\u2715';x.onclick=e=>{e.stopPropagation();removeTrack(i)};d.appendChild(x)}d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
 function setTab(t){
  tab=(t+TABS.length)%TABS.length;const T=TABS[tab];G=curG();sel=0;rsel=0;pane='L';
  $('h1').textContent=T.h;$('dh').textContent=T.d;$('ds').textContent=T.sm;$('lbar').textContent=T.bar;
  TABS.forEach((_,k)=>$('tb'+k).classList.toggle('on',k==tab));draw();
 }
 TABS.forEach((_,k)=>$('tb'+k).onclick=()=>setTab(k));$('kl').onclick=()=>setTab(tab-1);$('kr').onclick=()=>setTab(tab+1);
-function draw(){G=curG();if(sel>=G.length)sel=Math.max(0,G.length-1);$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
-function act(i){const g=G[sel];if(i===-4||(g&&g.create)){openAlbumDlg();return}if(i===-2){pickAlbumFiles(g);return}if(i===-3){delAlbum(g);return}if(i<0){const a=avail(g.ids);if(a.length)start(a);return}if(have(i))start([i])}
+function updDesc(){const g=G[sel],T=TABS[tab],al=tab==2&&g&&g.album;$('dh').textContent=al?g.n:T.d;$('ds').textContent=al?'Soundtrack album with '+g.ids.length+' track'+(g.ids.length==1?'':'s')+'. Tap ADD FILES to add mp3s, or use the rows below for cover art and renaming.':T.sm;const im=$('dcov');if(al&&g.cover){im.src=g.cover;im.style.display='block'}else im.style.display='none'}
+function draw(){G=curG();if(sel>=G.length)sel=Math.max(0,G.length-1);updDesc();$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
+function act(i){const g=G[sel];if(i===-4||(g&&g.create)){openAlbumDlg();return}if(i===-2){pickAlbumFiles(g);return}if(i===-3){delAlbum(g);return}if(i===-5){pickCover(g);return}if(i===-6){openAlbumDlg(g);return}if(i===-7){removeCover(g);return}if(i<0){const a=avail(g.ids);if(a.length)start(a);return}if(have(i))start([i])}
 function start(list,pos=0){q=list;qi=pos;qname=G[sel].n;load()}
 async function load(){
  const i=q[qi],my=++tok;
  $('nl').textContent=q.length>1?qname:byId[i].n;$('nt').textContent=byId[i].t;
- $('lb1').textContent=byId[i].n;
+ {const al=albumOf(i);setCover(al);$('lb1').textContent=al&&al.cover&&byId[i].n.length>24?byId[i].n.slice(0,23)+'…':byId[i].n}
  try{const u=await getUrl(i);if(my===tok)$('nt').textContent=byId[i].t;if(my!==tok)return;A.src=u;A.play().catch(()=>{})}
  catch(err){if(my===tok)$('nt').textContent='Could not load this track: '+err.message}
 }
@@ -642,8 +688,8 @@ function enter(){if(pane=='L'){pane='R';draw();act(-1)}else act(tracks()[rsel])}
 function same(){const t=tracks()[rsel];return state!='stop'&&(t<0?qname===G[sel].n:t===q[qi])}
 function hasTracks(){return Object.keys(files).length>0}
 function openGate(){$('gate').classList.remove('hide');$('gmsg').textContent='';$('gmsg').className='';$('gx').hidden=false}
-function closeGate(){$('gate').classList.add('hide');$('adlg').classList.add('hide')}
-const gateOpen=()=>!$('gate').classList.contains('hide')||!$('adlg').classList.contains('hide');
+function closeGate(){['gate','adlg','thm'].forEach(x=>$(x).classList.add('hide'))}
+const gateOpen=()=>['gate','adlg','thm'].some(x=>!$(x).classList.contains('hide'));
 
 /* ---------- input detection: hints show only for the device in use ---------- */
 let inp='';
@@ -702,6 +748,197 @@ function padLoop(t){
 }
 addEventListener('gamepadconnected',padStart);
 addEventListener('gamepaddisconnected',()=>setTimeout(padStop,0));
+
+/* ---------- Album cover art ---------- */
+function setCover(al){curCoverUrl=al&&al.cover||'';const im=$('lbimg');if(curCoverUrl){im.setAttribute('href',curCoverUrl);im.style.display=''}else im.style.display='none';applyBg()}
+const albumOf=id=>ALBUMS.find(a=>a.ids.includes(id));
+function refreshCover(){const i=q[qi];setCover(i===undefined?null:albumOf(i))}
+function imgToBlob(file,max,square){
+ return new Promise((res,rej)=>{
+  const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{try{
+   let sw=im.naturalWidth,sh=im.naturalHeight,sx=0,sy=0;
+   if(square){const s=Math.min(sw,sh);sx=(sw-s)/2;sy=(sh-s)/2;sw=sh=s}
+   const sc=Math.min(1,max/Math.max(sw,sh)),w=Math.max(1,Math.round(sw*sc)),h=Math.max(1,Math.round(sh*sc));
+   const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,sx,sy,sw,sh,0,0,w,h);
+   c.toBlob(b=>{URL.revokeObjectURL(u);b?res(b):rej(new Error('Could not read that image.'))},'image/jpeg',.88)
+  }catch(e){URL.revokeObjectURL(u);rej(e)}};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('Could not read that image.'))};
+  im.src=u;
+ });
+}
+async function setAlbumCover(al,blob){if(al.cover)URL.revokeObjectURL(al.cover);al.cover=blob?URL.createObjectURL(blob):'';if(blob)await dbPut('cover:'+al.key,blob);else await dbDel('cover:'+al.key)}
+let curCovKey='';
+function pickCover(al){if(!al||!al.album)return;curCovKey=al.key;$('cin').click()}
+function removeCover(al){if(al&&al.album)setAlbumCover(al,null).then(()=>{refreshCover();rsel=0;draw()})}
+$('cin').onchange=async()=>{
+ const f=$('cin').files[0];$('cin').value='';const al=ALBUMS.find(a=>a.key===curCovKey);if(!f||!al)return;
+ try{await setAlbumCover(al,await imgToBlob(f,600,true));$('nt').textContent='Cover art set for "'+al.n+'".';refreshCover();draw()}
+ catch(e){$('nt').textContent='Could not read that image.'}
+};
+let albDirty=false;
+async function importAlbumItem(j,blob,nu,nf){
+ const nm=j.alb||j.albCover;let al=ALBUMS.find(a=>a.n.toLowerCase()===nm.toLowerCase());
+ if(!al){al={key:'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n:nm,ids:[],album:true};ALBUMS.push(al)}
+ albDirty=true;
+ if(j.albCover){try{await setAlbumCover(al,await imgToBlob(blob,600,true))}catch(e){}return}
+ const meta=await readTags(blob),fname=j.name.split(/[\\/]/).pop(),title=meta.title||cleanName(fname)||'Untitled',sig=fname+'|'+blob.size;
+ if(al.ids.some(i=>byId[i]&&byId[i].sig===sig))return;
+ const id=nextCustomId(),rec={title,artist:meta.artist||'',album:meta.album||'',disc:meta.disc,trk:meta.trk,sig,alb:al.key};
+ regCustom(id,rec);await dbPut('m:'+id,rec);await dbPut(id,blob);nu[id]=URL.createObjectURL(blob);nf[id]=true;al.ids.push(id);
+}
+
+/* ---------- Export music (zip, no libraries) ---------- */
+const crcT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+async function buildZip(entries,onp){
+ const enc=new TextEncoder(),parts=[],cd=[];let off=0;
+ const now=new Date(),dt=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate(),tm=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+ for(let i=0;i<entries.length;i++){
+  const e=entries[i],nb=enc.encode(e.name),size=e.blob.size;
+  let c=0xFFFFFFFF;
+  for(let p=0;p<size;p+=8388608){const u=new Uint8Array(await e.blob.slice(p,p+8388608).arrayBuffer());for(let k=0;k<u.length;k++)c=crcT[(c^u[k])&255]^(c>>>8)}
+  c=(c^0xFFFFFFFF)>>>0;
+  const h=new DataView(new ArrayBuffer(30));
+  h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);h.setUint32(14,c,true);h.setUint32(18,size,true);h.setUint32(22,size,true);h.setUint16(26,nb.length,true);
+  parts.push(h.buffer,nb,e.blob);
+  const ch=new DataView(new ArrayBuffer(46));
+  ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(12,tm,true);ch.setUint16(14,dt,true);ch.setUint32(16,c,true);ch.setUint32(20,size,true);ch.setUint32(24,size,true);ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+  cd.push(ch.buffer,nb);off+=30+nb.length+size;
+  if(onp)onp(i+1,entries.length);await tick();
+ }
+ let cds=0;cd.forEach(b=>cds+=b.byteLength);
+ const end=new DataView(new ArrayBuffer(22));
+ end.setUint32(0,0x06054b50,true);end.setUint16(8,entries.length,true);end.setUint16(10,entries.length,true);end.setUint32(12,cds,true);end.setUint32(16,off,true);
+ return new Blob([...parts,...cd,end.buffer],{type:'application/zip'});
+}
+async function exportMusic(everything){
+ const msg=$('gmsg'),pg=$('gprog'),bar=$('gbar');msg.className='';msg.textContent='Preparing export...';
+ try{
+  const all=await dbAll(),ent=[],used=new Set();
+  const uniq=p=>{let n=p,k=2;const d=p.lastIndexOf('.');while(used.has(n.toLowerCase())){n=(d>0?p.slice(0,d):p)+' ('+k+++')'+(d>0?p.slice(d):'')}used.add(n.toLowerCase());return n};
+  const safe=s=>String(s).replace(/[\\/:*?"<>|]/g,'_').trim()||'untitled';
+  const extOf=b=>({'audio/mpeg':'mp3','audio/mp4':'m4a','audio/ogg':'ogg','audio/wav':'wav','audio/flac':'flac','audio/aac':'aac'}[b.type]||'mp3');
+  const fileFor=(t,b)=>{const o=(t.sig||'').split('|')[0];return o&&/\.[a-z0-9]{2,5}$/i.test(o)?safe(o):safe(t.t)+'.'+extOf(b)};
+  const inAlb=new Set();
+  ALBUMS.forEach(al=>{
+   al.ids.forEach(id=>{const b=all[id];if(!(b instanceof Blob)||!byId[id])return;inAlb.add(id);ent.push({name:uniq('Soundtrack Albums/'+safe(al.n)+'/'+fileFor(byId[id],b)),blob:b})});
+   const cb=all['cover:'+al.key];if(cb instanceof Blob&&al.ids.some(id=>inAlb.has(id)))ent.push({name:uniq('Soundtrack Albums/'+safe(al.n)+'/cover.jpg'),blob:cb});
+  });
+  const musicIds=new Set(TABS[2].G.find(g=>g.isAll).ids);
+  Object.keys(all).forEach(k=>{
+   const id=+k,b=all[k];if(!(b instanceof Blob)||!byId[id]||inAlb.has(id))return;
+   if(!everything&&!musicIds.has(id))return;
+   const t=byId[id];
+   if(t.custom)ent.push({name:uniq('Added Songs/'+fileFor(t,b)),blob:b});
+   else ent.push({name:uniq((musicIds.has(id)?'Music/':'Tapes and Records/')+'[#'+id+'] '+safe(t.n)+'.'+extOf(b)),blob:b});
+  });
+  if(!ent.length)throw new Error('Nothing to export yet. Add some audio first.');
+  let tot=0;ent.forEach(e=>tot+=e.blob.size);
+  if(tot>3.9e9)throw new Error('That is over 4 GB, which one zip cannot hold. Try EXPORT MUSIC instead.');
+  pg.style.display='block';bar.style.width='0';
+  const zb=await buildZip(ent,(d,n)=>{bar.style.width=(d/n*100)+'%';msg.textContent='Packing '+d+' of '+n+'...'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(zb);a.download=everything?'ZeroesVTapes-all-audio.zip':'ZeroesVTapes-music.zip';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},60000);
+  pg.style.display='none';msg.textContent='Exported '+ent.length+' files ('+(zb.size/1048576).toFixed(1)+' MB). Import this zip any time to restore songs, albums and cover art.';
+ }catch(err){pg.style.display='none';msg.className='err';msg.textContent=err.message||String(err)}
+}
+
+/* ---------- Customization ---------- */
+const DEF={bgm:'default',bg1:'#0b0e0e',bg2:'#1c2b26',ang:160,bri:80,blur:0,dim:0,vig:1,scan:0,covbg:0,ink:'#e9ecea',bar:'#d9dcda',sel:'#e6e9e7',acc:'#ffffff',panel:'#080a0a',pan:78,font:'default',fsz:100,ls:4,shell:'#16191a',label:'#e8eae3',stripe:'#3f9a62',lblink:'#333333',reel:'#d8dad5',brand:'SONY',model:'BHF 46',line2:'Cuba, 1975',spin:1};
+const ST={...DEF};let bgUrl='',curCoverUrl='',hadLS=false;
+try{const s=localStorage.getItem('zvt-settings');if(s){Object.assign(ST,JSON.parse(s));hadLS=true}}catch(e){}
+const FONTS={default:'"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif',mono:'"Courier New",ui-monospace,monospace',serif:'Georgia,"Times New Roman",serif',round:'ui-rounded,"Trebuchet MS",system-ui,sans-serif',hand:'"Segoe Print","Bradley Hand","Comic Sans MS",cursive'};
+const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
+const shade=(h,f)=>{const n=parseInt(h.slice(1),16),c=x=>Math.round(x*f).toString(16).padStart(2,'0');return'#'+c(n>>16)+c(n>>8&255)+c(n&255)};
+const PRESETS={
+ 'Peace Walker':{...DEF},
+ 'Mother Base':{ink:'#dff5e6',bar:'#9fd6b0',sel:'#cdeed8',acc:'#6fe39b',panel:'#04120a',stripe:'#2f8f5a',bgm:'grad',bg1:'#03150c',bg2:'#0b3a22',ang:160},
+ 'Outer Heaven':{ink:'#ffe6c7',bar:'#f0a64a',sel:'#ffd9a0',acc:'#ff9a2e',panel:'#140a02',stripe:'#c8741a',bgm:'grad',bg1:'#1a0d02',bg2:'#4a2406',ang:160},
+ 'Midnight':{ink:'#e3ecff',bar:'#9db8f0',sel:'#cfe0ff',acc:'#6aa2ff',panel:'#050a18',stripe:'#3d6fd1',bgm:'grad',bg1:'#040814',bg2:'#12265a',ang:160},
+ 'Crimson':{ink:'#ffe3e3',bar:'#e07a7a',sel:'#ffc9c9',acc:'#ff5a5a',panel:'#170406',stripe:'#b3262f',bgm:'grad',bg1:'#1a0406',bg2:'#5a0f16',ang:160},
+ 'Mono':{ink:'#f2f2f2',bar:'#cfcfcf',sel:'#ffffff',acc:'#ffffff',panel:'#0a0a0a',stripe:'#777777',bgm:'color',bg1:'#0b0b0b'},
+ 'Vaporwave':{ink:'#ffe8ff',bar:'#ff9be6',sel:'#ffd0f5',acc:'#5ffbf1',panel:'#120420',stripe:'#ff4fa8',bgm:'grad',bg1:'#1b0536',bg2:'#ff4fa8',ang:200}
+};
+function applyBg(){
+ const s=ST,e=$('bg');let bg='';
+ if(s.covbg&&curCoverUrl)bg='url("'+curCoverUrl+'") center/cover no-repeat';
+ else if(s.bgm=='color')bg=s.bg1;
+ else if(s.bgm=='grad')bg='linear-gradient('+s.ang+'deg,'+s.bg1+','+s.bg2+')';
+ else if(s.bgm=='image'&&bgUrl)bg='url("'+bgUrl+'") center/cover no-repeat';
+ e.style.background=bg;
+ e.style.filter='brightness('+s.bri/100+') contrast(1.05)'+(s.blur?' blur('+s.blur+'px)':'');
+ e.style.transform=s.blur?'scale(1.08)':'';
+}
+function applySettings(){
+ const r=document.documentElement.style,s=ST,b=document.body.classList;
+ r.setProperty('--ink',s.ink);r.setProperty('--bar',s.bar);r.setProperty('--sel',s.sel);r.setProperty('--acc',s.acc);
+ r.setProperty('--dark',rgba(s.panel,s.pan/100));
+ if(s.acc.toLowerCase()==='#ffffff')r.removeProperty('--tabc');else r.setProperty('--tabc',shade(s.acc,.5));
+ r.setProperty('--ff',FONTS[s.font]||FONTS.default);r.setProperty('--fsz',s.fsz/100);r.setProperty('--ls',s.ls/100+'em');
+ r.setProperty('--lblink',s.lblink);r.setProperty('--reel',s.reel);
+ b.toggle('novig',!s.vig);b.toggle('scan',!!s.scan);b.toggle('nospin',!s.spin);
+ $('cShell').setAttribute('fill',s.shell);$('cLabel').setAttribute('fill',s.label);$('cStripe').setAttribute('fill',s.stripe);
+ $('cBrand').textContent=s.brand;$('cModel').textContent=s.model;$('lb2').textContent=s.line2;
+ $('bgd').style.background='rgba(0,0,0,'+s.dim/100+')';
+ applyBg();
+}
+let svT=0;
+function saveSettings(){try{localStorage.setItem('zvt-settings',JSON.stringify(ST))}catch(e){}clearTimeout(svT);svT=setTimeout(()=>dbPut('settings',{...ST}),400)}
+const commit=()=>{applySettings();saveSettings()};
+const SECT=[
+ ['Background',[
+  ['bgm','select','Background',[['default','Original photo'],['color','Solid color'],['grad','Gradient'],['image','My picture']]],
+  ['bg1','color','Color 1'],['bg2','color','Color 2 (gradient)'],['ang','range','Gradient angle',0,360,5,'°'],
+  ['@pic'],['covbg','check','Playing album cover as background'],
+  ['bri','range','Brightness',20,150,5,'%'],['blur','range','Blur',0,24,1,'px'],['dim','range','Darken',0,90,5,'%']]],
+ ['Colors',[['ink','color','Text'],['bar','color','Header bars'],['sel','color','Highlight'],['acc','color','Accent (progress, tabs)'],['panel','color','Panel color'],['pan','range','Panel opacity',20,100,2,'%']]],
+ ['Cassette',[['shell','color','Shell'],['label','color','Label paper'],['stripe','color','Label stripe'],['lblink','color','Label ink'],['reel','color','Reels'],['brand','text','Brand text'],['model','text','Model text'],['line2','text','Label line 2']]],
+ ['Text',[['font','select','Font',[['default','Classic'],['mono','Typewriter'],['serif','Serif'],['round','Rounded'],['hand','Handwritten']]],['fsz','range','Text size',80,130,5,'%'],['ls','range','Letter spacing',0,20,1,'']]],
+ ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels']]]
+];
+function buildPanel(){
+ const body=$('thbody'),keep=body.scrollTop;body.innerHTML='';
+ const sec=t=>{const d=document.createElement('div');d.className='ths';d.textContent=t.toUpperCase();body.appendChild(d)};
+ const row=(label,el)=>{const r=document.createElement('div');r.className='thr';const l=document.createElement('label');l.textContent=label;r.append(l,el);body.appendChild(r)};
+ sec('Themes');
+ const ch=document.createElement('div');ch.className='chips';
+ Object.keys(PRESETS).forEach(n=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>{Object.assign(ST,PRESETS[n]);commit();buildPanel()};ch.appendChild(b)});
+ body.appendChild(ch);
+ SECT.forEach(([title,fields])=>{
+  sec(title);
+  fields.forEach(f=>{
+   const [k,type,label,a,b2,c,unit]=f;
+   if(k==='@pic'){
+    const w=document.createElement('div');w.style.cssText='display:flex;gap:.5em';
+    const up=document.createElement('button');up.textContent='CHOOSE';up.onclick=()=>$('bgin').click();w.appendChild(up);
+    if(bgUrl){const rm=document.createElement('button');rm.textContent='REMOVE';rm.onclick=()=>{URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg');if(ST.bgm=='image')ST.bgm='default';commit();buildPanel()};w.appendChild(rm)}
+    row('My picture',w);return;
+   }
+   let el;
+   if(type=='select'){el=document.createElement('select');a.forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;el.appendChild(o)});el.value=ST[k];el.onchange=()=>{ST[k]=el.value;commit()}}
+   else if(type=='color'){el=document.createElement('input');el.type='color';el.value=ST[k];el.oninput=()=>{ST[k]=el.value;commit()}}
+   else if(type=='check'){el=document.createElement('input');el.type='checkbox';el.checked=!!ST[k];el.onchange=()=>{ST[k]=el.checked?1:0;commit()}}
+   else if(type=='text'){el=document.createElement('input');el.type='text';el.maxLength=24;el.value=ST[k];el.oninput=()=>{ST[k]=el.value;commit()}}
+   else if(type=='range'){
+    el=document.createElement('div');el.className='rg';const i=document.createElement('input'),v=document.createElement('span');
+    i.type='range';i.min=a;i.max=b2;i.step=c;i.value=ST[k];v.textContent=ST[k]+unit;
+    i.oninput=()=>{ST[k]=+i.value;v.textContent=i.value+unit;commit()};el.append(i,v);
+   }
+   row(label,el);
+  });
+ });
+ body.scrollTop=keep;
+}
+function openTheme(){buildPanel();$('thm').classList.remove('hide')}
+$('bSet').onclick=openTheme;$('thok').onclick=closeGate;
+$('thrs').onclick=()=>{if(bgUrl){URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg')}Object.keys(ST).forEach(k=>delete ST[k]);Object.assign(ST,DEF);commit();buildPanel()};
+$('bgin').onchange=async()=>{
+ const f=$('bgin').files[0];$('bgin').value='';if(!f)return;
+ try{const b=await imgToBlob(f,1920,false);if(bgUrl)URL.revokeObjectURL(bgUrl);bgUrl=URL.createObjectURL(b);await dbPut('bgimg',b);ST.bgm='image';commit();buildPanel()}
+ catch(e){alert('Could not read that image.')}
+};
+$('gexp').onclick=()=>exportMusic(false);$('gexa').onclick=()=>exportMusic(true);
+applySettings();
 
 /* ---------- audio.zip gate ---------- */
 const zin=$('zin');
