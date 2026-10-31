@@ -89,6 +89,11 @@ button svg{width:1.2em;height:1.2em;fill:currentColor}
 #gdrop button{margin:0 auto;padding:.6em 1.4em;font-size:1em}
 #gmsg{margin-top:1em;min-height:1.4em;font-size:.85em}#gmsg.err{color:#ff8a80}
 #gdrop #gx{margin:.8em auto 0}#gdrop #gx[hidden]{display:none}
+#gdrop{max-height:calc(100vh - 8vmin - var(--sat) - var(--sab));max-height:calc(100dvh - 8vmin - var(--sat) - var(--sab));overflow-y:auto;overscroll-behavior:contain}
+#gdrop #gx{position:sticky;bottom:0;display:block;background:rgba(20,24,24,.97)}
+#adbox{max-height:calc(100vh - 8vmin - var(--sat) - var(--sab));max-height:calc(100dvh - 8vmin - var(--sat) - var(--sab));overflow-y:auto;overscroll-behavior:contain}
+#adbox .row{position:sticky;bottom:0;padding:.4em 0;background:rgba(20,24,24,.97)}
+@media (max-height:520px){#gdrop{padding:2.5vmin 4vmin}#gdrop h2{margin-bottom:.3em}#gdrop p{margin-bottom:.6em;line-height:1.35}#gdrop button{padding:.4em 1em}#adbox{padding:3vmin 4vmin}#adbox h2{margin-bottom:.3em}#adbox p{margin-bottom:.5em}#adbox input{margin-bottom:.5em}}
 .pk,.po,.kbh{display:none}
 body.pad .pk{display:inline}body.pad .po{display:block}body.kb .kbh{display:block}
 body:not(.pad):not(.kb) .foot{display:none}
