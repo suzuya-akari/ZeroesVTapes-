@@ -150,12 +150,12 @@ body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:au
 </style>
 </head>
 <body>
-<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><div class="gex"><button id="gexp">EXPORT MUSIC</button><button id="gexa">EXPORT ALL AUDIO</button></div><p class="gnote">Export saves your songs, Soundtrack Albums and cover art into one zip you can back up, move to another device, or import again here.</p><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
+<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3 / .flac / .m4a / .ogg</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><div class="gex"><button id="gexp">EXPORT MUSIC</button><button id="gexa">EXPORT ALL AUDIO</button></div><p class="gnote">Export saves your songs, Soundtrack Albums and cover art into one zip you can back up, move to another device, or import again here.</p><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
 <div id="adlg" class="hide"><div id="adbox"><h2 id="adt">NEW SOUNDTRACK ALBUM</h2><p id="adp">Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
 <input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
 <div id="bg"></div><div id="bgd"></div><div id="scan"></div><div id="sub"></div>
 <input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden>
-<div id="lydlg" class="hide"><div id="lybox"><h2>LYRICS</h2><p id="lyt"></p><textarea id="lytxt" placeholder="Paste lyrics here, or tap LOAD .LRC FILE. Plain text works. Synced (LRC) lyrics work too, e.g. [00:12.50]Words of the line (tags like [ti:], [ar:], [offset:] are understood)" spellcheck="false"></textarea><p id="lyst"></p><select id="lyres" hidden></select><div id="lyoffrow"><span>Timing offset, this song only</span><button id="lyom" type="button">&minus;</button><input id="lyoi" type="number" step="0.1" min="-60" max="60" value="0" inputmode="decimal"><span>s</span><button id="lyop" type="button">+</button></div><div class="row"><button id="lyok">SAVE</button><button id="lyweb" title="Search the free LRCLIB database for synced lyrics">FIND ONLINE</button><button id="lyfile" title="Load a .lrc or .txt lyrics file">LOAD .LRC FILE</button><input type="file" id="lyin" accept=".lrc,.txt,text/plain" hidden><button id="lyrd" title="Load lyrics stored inside this mp3">READ FROM MP3</button><button id="lycl">CLEAR</button><button id="lyno">CANCEL</button></div></div></div>
+<div id="lydlg" class="hide"><div id="lybox"><h2>LYRICS</h2><p id="lyt"></p><textarea id="lytxt" placeholder="Paste lyrics here, or tap LOAD .LRC FILE. Plain text works. Synced (LRC) lyrics work too, e.g. [00:12.50]Words of the line (tags like [ti:], [ar:], [offset:] are understood)" spellcheck="false"></textarea><p id="lyst"></p><select id="lyres" hidden></select><div id="lyoffrow"><span>Timing offset, this song only</span><button id="lyom" type="button">&minus;</button><input id="lyoi" type="number" step="0.1" min="-60" max="60" value="0" inputmode="decimal"><span>s</span><button id="lyop" type="button">+</button></div><div class="row"><button id="lyok">SAVE</button><button id="lyweb" title="Search the free LRCLIB database for synced lyrics">FIND ONLINE</button><button id="lyfile" title="Load a .lrc or .txt lyrics file">LOAD .LRC FILE</button><input type="file" id="lyin" accept=".lrc,.txt,text/plain" hidden><button id="lyrd" title="Load lyrics stored inside this audio file">READ FROM FILE</button><button id="lycl">CLEAR</button><button id="lyno">CANCEL</button></div></div></div>
 <div id="thm" class="hide"><div id="thbox"><h2>CUSTOMIZE</h2><div id="thbody"></div><div class="row"><button id="thrs">RESET</button><button id="thok">DONE</button></div></div></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <div id="app"><div class="wrap">
@@ -299,13 +299,13 @@ function makeAlbum(){
  const al={key:'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),n,ids:[],album:true};
  ALBUMS.push(al);syncAlbums();saveAlbums();closeAlbumDlg();
  tab=2;setTab(2);sel=G.indexOf(al);if(sel<0)sel=0;rsel=0;pane='R';draw();
- $('nt').textContent='Album "'+n+'" created. Press ADD FILES to add mp3s to it.';
+ $('nt').textContent='Album "'+n+'" created. Press ADD FILES to add songs to it.';
 }
 function pickAlbumFiles(al){if(!al||!al.album)return;curAlb=al.key;$('ain').click()}
 async function addToAlbum(list){
  const al=ALBUMS.find(a=>a.key===curAlb);if(!al)return;
  const fl=list.filter(f=>audioName(f.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
- if(!fl.length){$('nt').textContent='No audio files found. Choose .mp3 files.';return}
+ if(!fl.length){$('nt').textContent='No audio files found. Choose audio files (.mp3, .flac, .m4a, .ogg).';return}
  let n=0,added=0;
  for(const f of fl){
   $('nt').textContent='Adding '+(++n)+' of '+fl.length+' to "'+al.n+'"...';
@@ -575,7 +575,105 @@ function id3sylt(d){
  }
  return lines.filter(l=>l.s).map(l=>lrcT(l.t)+l.s).join('\n');
 }
+/* ---------- FLAC / Ogg (Vorbis, Opus) / M4A tag reading ---------- */
+const u8=b=>new Uint8Array(b),le32=(b,i)=>(b[i]|(b[i+1]<<8)|(b[i+2]<<16)|(b[i+3]<<24))>>>0,be32t=(b,i)=>((b[i]<<24)|(b[i+1]<<16)|(b[i+2]<<8)|b[i+3])>>>0;
+const utf8=b=>new TextDecoder('utf-8').decode(b);
+async function rdBytes(blob,a,n){return u8(await blob.slice(a,a+n).arrayBuffer())}
+function vorbisComments(b){
+ const o={};try{
+  let p=0;const vl=le32(b,p);p+=4+vl;const n=le32(b,p);p+=4;const lyr=[];
+  for(let i=0;i<n&&p+4<=b.length;i++){
+   const l=le32(b,p);p+=4;if(p+l>b.length)break;
+   const s=utf8(b.subarray(p,p+l));p+=l;const e=s.indexOf('=');if(e<1)continue;
+   const k=s.slice(0,e).toUpperCase(),v=s.slice(e+1).trim();if(!v)continue;
+   if(k==='TITLE'&&!o.title)o.title=v;else if(k==='ARTIST'&&!o.artist)o.artist=v;else if(k==='ALBUMARTIST'&&!o.aa)o.aa=v;
+   else if(k==='ALBUM'&&!o.album)o.album=v;else if((k==='TRACKNUMBER'||k==='TRACK')&&!o.trk)o.trk=v;else if((k==='DISCNUMBER'||k==='DISC')&&!o.disc)o.disc=v;
+   else if(k==='SYNCEDLYRICS'||k==='LYRICS'||k==='UNSYNCEDLYRICS'||k==='LYRICS-ENG'||k==='LRC')lyr.push(v.replace(/\r\n?/g,'\n').trim());
+  }
+  o.lyrics=lyr.find(x=>/\[\d{1,3}:\d{1,2}([.:]\d{1,3})?\]/.test(x))||lyr[0]||'';
+ }catch(e){}
+ return o;
+}
+async function flacTags(blob){
+ let p=4;
+ for(let g=0;g<64&&p+4<=blob.size;g++){
+  const h=await rdBytes(blob,p,4),last=h[0]&128,type=h[0]&127,len=(h[1]<<16)|(h[2]<<8)|h[3];p+=4;
+  if(type===4&&len<=16e6)return vorbisComments(await rdBytes(blob,p,len));
+  p+=len;if(last)break;
+ }
+ return {};
+}
+async function oggTags(blob){
+ let p=0,cur=[],pk=[],total=0;
+ while(p+27<=blob.size&&total<16e6){
+  const h=await rdBytes(blob,p,27);
+  if(h[0]!==79||h[1]!==103||h[2]!==103||h[3]!==83)break;
+  const ns=h[26],seg=await rdBytes(blob,p+27,ns);let dl=0;for(let i=0;i<ns;i++)dl+=seg[i];
+  const data=await rdBytes(blob,p+27+ns,dl);p+=27+ns+dl;total+=dl;let o=0;
+  for(let i=0;i<ns;i++){cur.push(data.subarray(o,o+seg[i]));o+=seg[i];if(seg[i]<255){const L=cur.reduce((a,c)=>a+c.length,0),m=new Uint8Array(L);let q=0;cur.forEach(c=>{m.set(c,q);q+=c.length});pk.push(m);cur=[]}}
+  if(pk.length>=2)break;
+ }
+ const c=pk[1]||pk[0];if(!c)return {};
+ const hd=String.fromCharCode(...c.subarray(0,8));
+ if(hd==='OpusTags')return vorbisComments(c.subarray(8));
+ if(c[0]===3&&String.fromCharCode(...c.subarray(1,7))==='vorbis')return vorbisComments(c.subarray(7));
+ const c2=pk[0]&&pk[0]!==c?pk[0]:null;
+ return c2&&String.fromCharCode(...c2.subarray(0,8))==='OpusTags'?vorbisComments(c2.subarray(8)):{};
+}
+function mp4Find(b,s,e,name){
+ while(s+8<=e){
+  let sz=be32t(b,s),hs=8;const t=String.fromCharCode(b[s+4],b[s+5],b[s+6],b[s+7]);
+  if(sz===1){sz=be32t(b,s+8)*4294967296+be32t(b,s+12);hs=16}else if(sz===0)sz=e-s;
+  if(sz<hs||s+sz>e+0)sz=Math.max(hs,Math.min(sz,e-s));
+  if(t===name)return[s+hs,s+sz];
+  s+=sz;
+ }
+ return null;
+}
+async function m4aTags(blob){
+ let p=0,moov=null;
+ for(let g=0;g<400&&p+8<=blob.size;g++){
+  const h=await rdBytes(blob,p,16);let sz=be32t(h,0),hs=8;const t=String.fromCharCode(h[4],h[5],h[6],h[7]);
+  if(sz===1){sz=be32t(h,8)*4294967296+be32t(h,12);hs=16}else if(sz===0)sz=blob.size-p;
+  if(sz<hs)break;
+  if(t==='moov'){if(sz>48e6)return {};moov=await rdBytes(blob,p+hs,sz-hs);break}
+  p+=sz;
+ }
+ if(!moov)return {};
+ const o={};try{
+  const ud=mp4Find(moov,0,moov.length,'udta'),mt=ud&&mp4Find(moov,ud[0],ud[1],'meta');
+  if(!mt)return {};
+  const il=mp4Find(moov,mt[0]+4,mt[1],'ilst');if(!il)return {};
+  let s=il[0];
+  while(s+8<=il[1]){
+   const sz=be32t(moov,s);if(sz<8)break;const nm=String.fromCharCode(moov[s+4],moov[s+5],moov[s+6],moov[s+7]),end=Math.min(il[1],s+sz);
+   const d=mp4Find(moov,s+8,end,'data');
+   if(d&&d[1]-d[0]>=8){
+    const pl=moov.subarray(d[0]+8,d[1]);
+    if(nm==='\xA9nam'&&!o.title)o.title=utf8(pl).trim();
+    else if(nm==='\xA9ART'&&!o.artist)o.artist=utf8(pl).trim();
+    else if(nm==='aART'&&!o.aa)o.aa=utf8(pl).trim();
+    else if(nm==='\xA9alb'&&!o.album)o.album=utf8(pl).trim();
+    else if(nm==='trkn'&&pl.length>=4)o.trk=String((pl[2]<<8)|pl[3]);
+    else if(nm==='disk'&&pl.length>=4)o.disc=String((pl[2]<<8)|pl[3]);
+    else if(nm==='\xA9lyr'&&!o.lyrics)o.lyrics=utf8(pl).replace(/\r\n?/g,'\n').trim();
+   }
+   s+=sz;
+  }
+ }catch(e){}
+ return o;
+}
 async function readTags(blob){
+ try{
+  const h=await rdBytes(blob,0,12);let o=null;
+  if(h[0]===0x66&&h[1]===0x4C&&h[2]===0x61&&h[3]===0x43)o=await flacTags(blob);
+  else if(h[0]===0x4F&&h[1]===0x67&&h[2]===0x67&&h[3]===0x53)o=await oggTags(blob);
+  else if(h[4]===0x66&&h[5]===0x74&&h[6]===0x79&&h[7]===0x70)o=await m4aTags(blob);
+  if(o){o.artist=o.artist||o.aa||'';o.lyrics=o.lyrics||'';o.trk=parseInt(o.trk)||0;o.disc=parseInt(o.disc)||0;return o}
+ }catch(e){}
+ return readTagsMp3(blob);
+}
+async function readTagsMp3(blob){
  const o={};
  try{
   const h=new Uint8Array(await blob.slice(0,10).arrayBuffer());
@@ -1196,7 +1294,7 @@ async function applyPendLy(){
  updLyr(true);
 }
 $('lyrd').onclick=async()=>{const st=$('lyst'),u=urls[lyId];if(!u){st.textContent='This song is not available on this device.';return}
- try{const m=await readTags(await(await fetch(u)).blob());if(m.lyrics){$('lytxt').value=m.lyrics;st.textContent='Loaded the lyrics stored in this mp3. Press SAVE to keep them. '+(parseLyr(m.lyrics).synced?'(Synced)':'(Plain text)')}else st.textContent='No lyrics were found inside this mp3.'}catch(e){st.textContent='Could not read this file.'}};
+ try{const m=await readTags(await(await fetch(u)).blob());if(m.lyrics){$('lytxt').value=m.lyrics;st.textContent='Loaded the lyrics stored in this file. Press SAVE to keep them. '+(parseLyr(m.lyrics).synced?'(Synced)':'(Plain text)')}else st.textContent='No lyrics were found inside this file.'}catch(e){st.textContent='Could not read this file.'}};
 $('bLy').onclick=openLyrics;$('lyok').onclick=saveLyrics;$('lyno').onclick=()=>{if(lyId>=0){if(lyOffBak)LYO[lyId]=lyOffBak;else delete LYO[lyId]}closeGate()};
 function lySetOff(v){v=Math.round((+v||0)*10)/10;v=Math.max(-60,Math.min(60,v));if(v)LYO[lyId]=v;else delete LYO[lyId];$('lyoi').value=v;lyTick()}
 $('lyoi').oninput=()=>{const v=+$('lyoi').value;if(isFinite(v)){if(v)LYO[lyId]=Math.max(-60,Math.min(60,v));else delete LYO[lyId];lyTick()}};
