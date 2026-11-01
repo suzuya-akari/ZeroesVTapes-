@@ -23,7 +23,7 @@
 <meta name="twitter:image" content="https://suzuya-akari.github.io/ZeroesVTapes-/preview.jpg">
 <meta property="og:description" content="ZeroesVTapes: your music, your device. A fully customizable music player that plays your own files offline, with no account, no ads and no subscription. Install it from your browser's menu and it just works. Just began counting from Zeroes.">
 <style>
-:root{--sat:env(safe-area-inset-top,0px);--sar:env(safe-area-inset-right,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sx:max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));color-scheme:dark;--u:min(1vh,.5625vw);--ink:#e9ecea;--bar:#d9dcda;--dark:rgba(8,10,10,.78);--sel:#e6e9e7;--dim:#7d8480}
+:root{--sat:env(safe-area-inset-top,0px);--sar:env(safe-area-inset-right,0px);--sab:env(safe-area-inset-bottom,0px);--sal:env(safe-area-inset-left,0px);--sx:max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));color-scheme:dark;--u:min(1vh,.5625vw);--ink:#e9ecea;--bar:#d9dcda;--dark:rgba(8,10,10,.78);--sel:#e6e9e7;--dim:#7d8480;--dlg:rgba(20,24,24,.97);--dlgs:#141818;--dk:#e9ecea;--ln:rgba(255,255,255,.35);--ln2:rgba(255,255,255,.12);--fld:rgba(255,255,255,.08);--actc:#fff;--dng:#d9a7a0;--selink:#101313}
 *{box-sizing:border-box;margin:0}
 html,body{touch-action:manipulation;height:100%;min-height:100vh;min-height:100dvh;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;background:#050606;color:var(--ink);font-family:"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif;letter-spacing:.04em;user-select:none;-webkit-tap-highlight-color:transparent}
 body{font-size:calc(var(--u)*2.5)}
@@ -47,7 +47,7 @@ h1{font-weight:400;font-size:calc(var(--u)*3.6);letter-spacing:.14em;text-shadow
 .item span{overflow:hidden;text-overflow:ellipsis}
 .item:hover{background:rgba(255,255,255,.08)}
 .item.sel{background:rgba(190,196,194,.35);border-left-color:#fff}
-.pane.focus .item.sel{background:var(--sel);color:#101313}
+.pane.focus .item.sel{background:var(--sel);color:var(--selink)}
 .item.lock{color:var(--dim);cursor:not-allowed}
 .item.lock::after{content:"Not acquired";font-size:.75em;opacity:.8;align-self:center}
 .item .eq{display:none;align-self:center;font-size:.8em}
@@ -100,7 +100,7 @@ body:not(.pad):not(.kb) .foot{display:none}
 @supports(height:1dvh){:root{--u:min(1dvh,.5625vw)}@media (max-aspect-ratio:4/3){:root{--u:min(1dvh,.9vw)}}}
 #fs{display:none!important}
 .item .rm{align-self:center;opacity:.55;padding:0 .5em;cursor:pointer;flex:none}.item .rm:hover{opacity:1}
-.item.act{color:#fff}.item.dng{color:#d9a7a0}.pane.focus .item.sel.act,.pane.focus .item.sel.dng{color:#101313}
+.item.act{color:var(--actc)}.item.dng{color:var(--dng)}.pane.focus .item.sel.act,.pane.focus .item.sel.dng{color:var(--selink)}
 #adlg{position:fixed;inset:0;z-index:55;display:grid;place-items:center;background:rgba(3,4,4,.92);padding:calc(4vmin + var(--sat)) calc(4vmin + var(--sar)) calc(4vmin + var(--sab)) calc(4vmin + var(--sal))}
 #adlg.hide{display:none}
 #adbox{width:min(92vw,460px);border:2px solid rgba(255,255,255,.35);padding:5vmin;text-align:center;background:rgba(20,24,24,.9);font-size:15px}
@@ -178,6 +178,18 @@ body.lyr #sub:not(:empty){display:block}
 body.lyboxon #sub{background:rgba(0,0,0,.62)}
 body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:auto;top:50%;transform:translate(-50%,-50%)}
 #lyst{min-height:1.3em;margin:-.4em 0 .6em!important;font-size:.8em!important;white-space:normal!important}
+
+/* ---- Dialogs follow the theme: panel colour for the box, readable text, ink-based borders ---- */
+#gdrop,#adbox,#thbox,#lybox,#delbox{background:var(--dlg);color:var(--dk);border-color:var(--ln)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) h2,:is(#gdrop,#adbox,#thbox,#lybox,#delbox) p,:is(#gdrop,#adbox,#thbox,#lybox,#delbox) label,:is(#gdrop,#adbox,#thbox,#lybox,#delbox) span,:is(#gdrop,#adbox,#thbox,#lybox,#delbox) b,:is(#gdrop,#adbox,#thbox,#lybox,#delbox) small{color:var(--dk)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) button{color:var(--dk);background:var(--fld);border-color:var(--ln)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) :is(input:not([type=color]):not([type=range]):not([type=checkbox]),select,textarea){color:var(--dk);background:var(--fld);border-color:var(--ln)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) :is(input,textarea)::placeholder{color:var(--dk);opacity:.5}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) select option{background:var(--dlgs);color:var(--dk)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) input[type=checkbox],:is(#gdrop,#adbox,#thbox,#lybox,#delbox) input[type=range]{accent-color:var(--acc,#fff)}
+:is(#gdrop,#adbox,#thbox,#lybox,#delbox) input[type=color]{border-color:var(--ln)}
+#gdrop #gx,#adbox .row,#lybox .row{background:var(--dlgs)}
+#dellist,#lyres{border-color:var(--ln)}#dellist label{border-bottom-color:var(--ln2)}#dellist label:active{background:var(--fld)}
 </style>
 </head>
 <body>
@@ -186,7 +198,7 @@ body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:au
 <input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
 <div id="bg"></div><div id="bgd"></div><div id="scan"></div><div id="sub"></div>
 <input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden>
-<div id="deldlg" class="hide"><div id="delbox"><h2>DELETE SONGS</h2><input id="delq" type="search" placeholder="Search by title, artist or album" autocomplete="off" autocapitalize="off" spellcheck="false"><p id="delc"></p><div id="dellist"></div><div class="row"><button id="delall" type="button">SELECT SHOWN</button><button id="delok" type="button" disabled>DELETE</button><button id="delno" type="button">CANCEL</button></div></div></div>
+<div id="deldlg" class="hide"><div id="delbox"><h2 id="delh">DELETE SONGS</h2><input id="delq" type="search" placeholder="Search by title, artist or album" autocomplete="off" autocapitalize="off" spellcheck="false"><p id="delc"></p><div id="dellist"></div><div class="row"><button id="delall" type="button">SELECT SHOWN</button><button id="delok" type="button" disabled>DELETE</button><button id="delno" type="button">CANCEL</button></div></div></div>
 <div id="lydlg" class="hide"><div id="lybox"><h2>LYRICS</h2><p id="lyt"></p><textarea id="lytxt" placeholder="Paste lyrics here, or tap LOAD .LRC FILE. Plain text works. Synced (LRC) lyrics work too, e.g. [00:12.50]Words of the line (tags like [ti:], [ar:], [offset:] are understood)" spellcheck="false"></textarea><p id="lyst"></p><select id="lyres" hidden></select><div id="lyoffrow"><span>Timing offset, this song only</span><button id="lyom" type="button">&minus;</button><input id="lyoi" type="number" step="0.1" min="-60" max="60" value="0" inputmode="decimal"><span>s</span><button id="lyop" type="button">+</button></div><div class="row"><button id="lyok">SAVE</button><button id="lyweb" title="Search the free LRCLIB database for synced lyrics">FIND ONLINE</button><button id="lyfile" title="Load a .lrc or .txt lyrics file">LOAD .LRC FILE</button><input type="file" id="lyin" accept=".lrc,.txt,text/plain" hidden><button id="lyrd" title="Load lyrics stored inside this audio file">READ FROM FILE</button><button id="lycl">CLEAR</button><button id="lyno">CANCEL</button></div></div></div>
 <div id="thm" class="hide"><div id="thbox"><h2>CUSTOMIZE</h2><div id="thbody"></div><div class="row"><button id="thrs">RESET</button><button id="thok">DONE</button></div></div></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
@@ -352,17 +364,25 @@ async function addToAlbum(list){
  $('nt').textContent=added+' track'+(added==1?'':'s')+' added to "'+al.n+'".';
  draw();
 }
+/* A song can be linked into several albums. Only the album that owns the file may delete it. */
+function dropFromAlbum(al,i){
+ al.ids=al.ids.filter(x=>x!==i);
+ const t=byId[i];if(!t||!t.custom||t.alb!==al.key)return;
+ const other=ALBUMS.find(a=>a!==al&&a.ids.includes(i));
+ if(other){t.alb=other.key;dbPut('m:'+i,{title:t.title,artist:t.artist,album:t.album,disc:t.disc,trk:t.trk,sig:t.sig,alb:other.key});return}
+ if(state!='stop'&&q.includes(i)){stop();q=[];qi=-1}
+ purge(i);
+}
 function removeTrack(i){
  const al=G[sel];if(!al||!al.album)return;
- if(state!='stop'&&q.includes(i)){stop();q=[];qi=-1}
- al.ids=al.ids.filter(x=>x!==i);purge(i);saveAlbums();rebuildAll();
+ dropFromAlbum(al,i);saveAlbums();rebuildAll();
  rsel=Math.min(rsel,Math.max(0,tracks().length-1));draw();
 }
 function delAlbum(al){
  if(!al||!al.album)return;
  if(!confirm('Delete album "'+al.n+'" and all its tracks from this device?'))return;
  if(state!='stop'&&q.some(x=>al.ids.includes(x))){stop();q=[];qi=-1}
- al.ids.slice().forEach(purge);setAlbumCover(al,null);ALBUMS.splice(ALBUMS.indexOf(al),1);syncAlbums();saveAlbums();refreshCover();
+ al.ids.slice().forEach(i=>dropFromAlbum(al,i));setAlbumCover(al,null);ALBUMS.splice(ALBUMS.indexOf(al),1);syncAlbums();saveAlbums();refreshCover();
  G=curG();sel=Math.min(sel,G.length-1);rsel=0;pane='L';draw();
 }
 let tab=0,G=TABS[0].G,qname='';
@@ -374,7 +394,7 @@ const avail=ids=>ids.filter(have);
 const fmt=s=>{s=Math.max(0,Math.floor(s||0));return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const NOTAPES={n:'No tapes added yet',ids:[],empty:true},NOREC={n:'No records added yet',ids:[],empty:true};
 function curG(){const T=TABS[tab];if(tab==2)return T.G.filter(x=>x.album||x.create||avail(x.ids).length);const g=T.G.filter(x=>avail(x.ids).length);return g.length?g:[tab==1?NOREC:NOTAPES]}
-function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=(TABS[tab].hideMissing||tab==2)?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-5,...(g.cover?[-7]:[]),-6,-3];return[-1,...ids]}
+function tracks(){const g=G[sel];if(!g||g.empty)return[];if(g.create)return[-4];const ids=(TABS[tab].hideMissing||tab==2)?avail(g.ids):g.ids;if(g.album)return[...(ids.length?[-1]:[]),...ids,-8,-5,...(g.cover?[-7]:[]),-6,-3];return[-1,...ids]}
 
 /* ---------- ZIP reading (no libraries) ---------- */
 const MIME={mp3:'audio/mpeg',m4a:'audio/mp4',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',opus:'audio/ogg'};
@@ -834,16 +854,16 @@ async function restore(){
 
 /* ---------- UI ---------- */
 function drawL(){ll.innerHTML='';G.forEach((g,i)=>{const d=document.createElement('div');d.className='item'+(i==sel?' sel':'')+(g.create?' act':'');d.setAttribute('role','option');d.innerHTML='<span>'+(g.cover?'<img class="th" src="'+g.cover+'" alt="">':'')+esc(g.n)+'</span><span class="cnt">'+(g.empty||g.create?'':avail(g.ids).length+'/'+g.ids.length)+'</span>';d.onclick=()=>{pane='L';sel=i;rsel=0;draw();if(g.create)openAlbumDlg()};d.ondblclick=()=>{if(g.create)return;const a=avail(g.ids);if(a.length)start(a)};ll.appendChild(d)})}
-function drawR(){rl.innerHTML='';const g=G[sel];tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'')+(i==-4?' act':'')+(i==-3?' dng':'');const lab=i==-1?'Play All':i==-3?'Delete this album':i==-4?'\uFF0B Create new Soundtrack Album':i==-5?(g.cover?'Change cover art':'Set cover art'):i==-6?'Rename album':i==-7?'Remove cover art':esc(byId[i].t);d.innerHTML='<span>'+lab+'</span>'+(i>=0?'<span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>':'');if(i>=0&&g&&g.album){const x=document.createElement('span');x.className='rm';x.title='Remove from album';x.textContent='\u2715';x.onclick=e=>{e.stopPropagation();removeTrack(i)};d.appendChild(x)}d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
+function drawR(){rl.innerHTML='';const g=G[sel];tracks().forEach((i,k)=>{const d=document.createElement('div');const cur=state!='stop'&&i>=0&&q[qi]==i;d.className='item'+(k==rsel?' sel':'')+(i>=0&&!have(i)?' lock':'')+(cur?' now':'')+(i==-4||i==-8?' act':'')+(i==-3?' dng':'');const lab=i==-1?'Play All':i==-3?'Delete this album':i==-4?'\uFF0B Create new Soundtrack Album':i==-8?'\uFF0B Add songs already on this device':i==-5?(g.cover?'Change cover art':'Set cover art'):i==-6?'Rename album':i==-7?'Remove cover art':esc(byId[i].t);d.innerHTML='<span>'+lab+'</span>'+(i>=0?'<span class="eq">'+(state=='play'?'◖))◗':'❚❚')+'</span>':'');if(i>=0&&g&&g.album){const x=document.createElement('span');x.className='rm';x.title='Remove from this album';x.textContent='\u2715';x.onclick=e=>{e.stopPropagation();removeTrack(i)};d.appendChild(x)}d.onclick=()=>{pane='R';rsel=k;draw();act(i)};rl.appendChild(d)})}
 function setTab(t){
  tab=(t+TABS.length)%TABS.length;const T=TABS[tab];G=curG();sel=0;rsel=0;pane='L';
  $('h1').textContent=T.h;$('dh').textContent=T.d;$('ds').textContent=T.sm;$('lbar').textContent=T.bar;
  TABS.forEach((_,k)=>$('tb'+k).classList.toggle('on',k==tab));draw();
 }
 TABS.forEach((_,k)=>$('tb'+k).onclick=()=>setTab(k));$('kl').onclick=()=>setTab(tab-1);$('kr').onclick=()=>setTab(tab+1);
-function updDesc(){const g=G[sel],T=TABS[tab],al=tab==2&&g&&g.album;$('dh').textContent=al?g.n:T.d;$('ds').textContent=al?'Soundtrack album with '+g.ids.length+' track'+(g.ids.length==1?'':'s')+'. Tap ADD FILES to add mp3s, or use the rows below for cover art and renaming.':T.sm;const im=$('dcov');if(al&&g.cover){im.src=g.cover;im.style.display='block'}else im.style.display='none'}
+function updDesc(){const g=G[sel],T=TABS[tab],al=tab==2&&g&&g.album;$('dh').textContent=al?g.n:T.d;$('ds').textContent=al?'Soundtrack album with '+g.ids.length+' track'+(g.ids.length==1?'':'s')+'. Tap ADD FILES for new files, or "Add songs already on this device" to pick songs you already have. Use the rows below for cover art and renaming.':T.sm;const im=$('dcov');if(al&&g.cover){im.src=g.cover;im.style.display='block'}else im.style.display='none'}
 function draw(){G=curG();if(sel>=G.length)sel=Math.max(0,G.length-1);updDesc();updLyr();$('pl').classList.toggle('focus',pane=='L');drawL();drawR();ll.querySelector('.sel')?.scrollIntoView({block:'nearest'});rl.querySelector('.sel')?.scrollIntoView({block:'nearest'})}
-function act(i){const g=G[sel];if(i===-4||(g&&g.create)){openAlbumDlg();return}if(i===-2){pickAlbumFiles(g);return}if(i===-3){delAlbum(g);return}if(i===-5){pickCover(g);return}if(i===-6){openAlbumDlg(g);return}if(i===-7){removeCover(g);return}if(i<0){const a=avail(g.ids);if(a.length)start(a);return}if(have(i))start([i])}
+function act(i){const g=G[sel];if(i===-4||(g&&g.create)){openAlbumDlg();return}if(i===-2){pickAlbumFiles(g);return}if(i===-3){delAlbum(g);return}if(i===-8){openLibPicker(g);return}if(i===-5){pickCover(g);return}if(i===-6){openAlbumDlg(g);return}if(i===-7){removeCover(g);return}if(i<0){const a=avail(g.ids);if(a.length)start(a);return}if(have(i))start([i])}
 function start(list,pos=0){q=list;qi=pos;qname=G[sel].n;load()}
 async function load(){
  const i=q[qi],my=++tok;
@@ -1006,7 +1026,7 @@ async function exportMusic(everything){
   const fileFor=(t,b)=>{const o=(t.sig||'').split('|')[0];return o&&/\.[a-z0-9]{2,5}$/i.test(o)?safe(o):safe(t.t)+'.'+extOf(b)};
   const inAlb=new Set(),exp=new Set();
   ALBUMS.forEach(al=>{
-   al.ids.forEach(id=>{const b=all[id];if(!(b instanceof Blob)||!byId[id])return;inAlb.add(id);exp.add(id);ent.push({name:uniq('Soundtrack Albums/'+safe(al.n)+'/'+fileFor(byId[id],b)),blob:b})});
+   al.ids.forEach(id=>{const b=all[id];if(!(b instanceof Blob)||!byId[id]||!byId[id].custom)return;inAlb.add(id);exp.add(id);ent.push({name:uniq('Soundtrack Albums/'+safe(al.n)+'/'+fileFor(byId[id],b)),blob:b})});
    const cb=all['cover:'+al.key];if(cb instanceof Blob&&al.ids.some(id=>inAlb.has(id)))ent.push({name:uniq('Soundtrack Albums/'+safe(al.n)+'/cover.jpg'),blob:cb});
   });
   const musicIds=new Set(TABS[2].G.find(g=>g.isAll).ids);
@@ -1036,6 +1056,10 @@ const ST={...DEF};let bgUrl='',curCoverUrl='',hadLS=false;
 try{const s=localStorage.getItem('zvt-settings');if(s){Object.assign(ST,JSON.parse(s));hadLS=true}}catch(e){}
 const FONTS={default:'"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif',mono:'"Courier New",ui-monospace,monospace',serif:'Georgia,"Times New Roman",serif',round:'ui-rounded,"Trebuchet MS",system-ui,sans-serif',hand:'"Segoe Print","Bradley Hand","Comic Sans MS",cursive'};
 const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
+const hexRGB=h=>{const n=parseInt(h.slice(1),16);return[n>>16,n>>8&255,n&255]};
+const relLum=h=>{const c=hexRGB(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+const contrastR=(a,b)=>{const x=relLum(a),y=relLum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const mixHex=(a,b,t)=>{const x=hexRGB(a),y=hexRGB(b);return'#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const shade=(h,f)=>{const n=parseInt(h.slice(1),16),c=x=>Math.round(x*f).toString(16).padStart(2,'0');return'#'+c(n>>16)+c(n>>8&255)+c(n&255)};
 const PRESETS={
  'Peace Walker':(({lyr,lymode,lypos,lybox,lysz,lyoff,awake,...r})=>r)(DEF),
@@ -1064,6 +1088,15 @@ function applySettings(){
  r.setProperty('--ff',FONTS[s.font]||FONTS.default);r.setProperty('--fsz',s.fsz/100);r.setProperty('--ls',s.ls/100+'em');
  r.setProperty('--lblink',s.lblink);r.setProperty('--reel',s.reel);
  b.toggle('novig',!s.vig);b.toggle('scan',!!s.scan);b.toggle('nospin',!s.spin);b.toggle('lyr',!!s.lyr);b.toggle('lypanel',s.lymode!='sub');b.toggle('lytop',s.lypos=='top');b.toggle('lymid',s.lypos=='middle');b.toggle('lyboxon',!!s.lybox);r.setProperty('--lysz',s.lysz/100);
+ {const pn=/^#[0-9a-f]{6}$/i.test(s.panel)?s.panel:'#080a0a',ik=/^#[0-9a-f]{6}$/i.test(s.ink)?s.ink:'#e9ecea';
+  const dk=contrastR(ik,pn)>=4.5?ik:(contrastR('#ffffff',pn)>=contrastR('#000000',pn)?'#ffffff':'#000000');
+  const ds=mixHex(pn,dk,.07);
+  r.setProperty('--dk',dk);r.setProperty('--dlgs',ds);r.setProperty('--dlg',rgba(ds,.97));r.setProperty('--ln',rgba(dk,.35));r.setProperty('--ln2',rgba(dk,.14));r.setProperty('--fld',rgba(dk,.09));
+  r.setProperty('color-scheme',relLum(pn)>.4?'light':'dark');
+  const ac=/^#[0-9a-f]{6}$/i.test(s.acc)?s.acc:'#ffffff',sl=/^#[0-9a-f]{6}$/i.test(s.sel)?s.sel:'#e6e9e7';
+  r.setProperty('--actc',contrastR(ac,pn)>=3.5?ac:dk);
+  r.setProperty('--dng',relLum(pn)>.4?'#a8362b':'#e8a79f');
+  r.setProperty('--selink',contrastR('#101313',sl)>=contrastR('#ffffff',sl)?'#101313':'#ffffff')}
  $('cShell').setAttribute('fill',s.shell);$('cLabel').setAttribute('fill',s.label);$('cStripe').setAttribute('fill',s.stripe);
  $('cBrand').textContent=s.brand;$('cModel').textContent=s.model;$('lb2').textContent=s.line2;
  $('bgd').style.background='rgba(0,0,0,'+s.dim/100+')';
@@ -1084,7 +1117,7 @@ const SECT=[
  ['Cassette',[['shell','color','Shell'],['label','color','Label paper'],['stripe','color','Label stripe'],['lblink','color','Label ink'],['reel','color','Reels'],['brand','text','Brand text'],['model','text','Model text'],['line2','text','Label line 2']]],
  ['Text',[['font','select','Font',[['default','Classic'],['mono','Typewriter'],['serif','Serif'],['round','Rounded'],['hand','Handwritten']]],['fsz','range','Text size',80,130,5,'%'],['ls','range','Letter spacing',0,20,1,'']]],
  ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels']]],
- ['Power',[['awake','check','Keep screen awake while playing']]]
+ ['Power',[['awake','check','Keep screen awake while playing'],['@sleep','x','Sleep timer']]]
 ];
 function buildPanel(){
  const body=$('thbody'),keep=body.scrollTop;body.innerHTML='';
@@ -1108,6 +1141,13 @@ function buildPanel(){
     const up=document.createElement('button');up.textContent='CHOOSE';up.onclick=()=>$('bgin').click();w.appendChild(up);
     if(bgUrl){const rm=document.createElement('button');rm.textContent='REMOVE';rm.onclick=()=>{URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg');if(ST.bgm=='image')ST.bgm='default';commit();buildPanel()};w.appendChild(rm)}
     row('My picture',w);return;
+   }
+   if(k==='@sleep'){
+    const w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;gap:.35em;align-items:flex-end';
+    const se=document.createElement('select');[[0,'Off'],[15,'15 minutes'],[30,'30 minutes'],[45,'45 minutes'],[60,'1 hour'],[90,'1.5 hours']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;se.appendChild(o)});
+    se.id='slpsel';se.value=slpEnd?slpMin:0;se.onchange=()=>{setSleep(+se.value)};
+    const st=document.createElement('span');st.id='slpst';st.style.cssText='font-size:.8em;opacity:.7';
+    w.append(se,st);row(label,w);slpShow();return;
    }
    let el;
    if(type=='select'){el=document.createElement('select');a.forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;el.appendChild(o)});el.value=ST[k];el.onchange=()=>{ST[k]=el.value;commit()}}
@@ -1248,6 +1288,25 @@ async function autoLy(id){
   if(m.lyrics&&m.lyrics.trim()&&LY[id]===undefined){LY[id]=m.lyrics;await dbPut('lyr:'+id,m.lyrics);lyKey='';updLyr(true)}}catch(e){}
 }
 function lyScroll(){lyTick()}
+/* ---------- Sleep timer: fades the music out and pauses ---------- */
+let slpEnd=0,slpMin=0,slpTimer=null;
+const SLP_FADE=20000;
+function slpShow(){const el=$('slpst');if(!el)return;const r=slpEnd-Date.now();el.textContent=slpEnd&&r>0?'Pausing in '+(r>=60000?Math.ceil(r/60000)+' min':Math.ceil(r/1000)+' s'):''}
+function setSleep(min){
+ if(slpTimer){clearInterval(slpTimer);slpTimer=null}
+ try{A.volume=1}catch(e){}
+ slpEnd=0;slpMin=0;
+ if(min>0){slpMin=min;slpEnd=Date.now()+min*60000;slpTimer=setInterval(slpTick,1000)}
+ slpShow();
+}
+function slpTick(){
+ const r=slpEnd-Date.now();
+ if(r>SLP_FADE){slpShow();return}
+ if(r>0){try{A.volume=Math.max(0,r/SLP_FADE)}catch(e){}slpShow();return}
+ clearInterval(slpTimer);slpTimer=null;slpEnd=0;slpMin=0;
+ A.pause();try{A.volume=1}catch(e){}
+ slpShow();const sv=$('slpsel');if(sv)sv.value=0;
+}
 /* ---------- Anti-sleep: Screen Wake Lock (phones, tablets, Windows/Mac/Linux browsers) ---------- */
 let wlock=null,wlBusy=false;
 async function wakeSync(){
@@ -1348,19 +1407,20 @@ function lySetOff(v){v=Math.round((+v||0)*10)/10;v=Math.max(-60,Math.min(60,v));
 $('lyoi').oninput=()=>{const v=+$('lyoi').value;if(isFinite(v)){if(v)LYO[lyId]=Math.max(-60,Math.min(60,v));else delete LYO[lyId];lyTick()}};
 $('lyom').onclick=()=>lySetOff(lyOff(lyId)-.1);$('lyop').onclick=()=>lySetOff(lyOff(lyId)+.1);$('lycl').onclick=()=>{$('lytxt').value='';saveLyrics()};
 /* ---------- Delete songs (search + multi-select) ---------- */
-let delSel=new Set();
+let delSel=new Set(),pickMode='del',pickAlb='';
 const delTitle=t=>t.custom?(t.artist?t.artist+' - ':'')+(t.title||t.n):(t.t||t.n);
 function delInfo(t){
- if(!t.custom)return 'Built-in slot (only the audio is removed)';
+ if(!t.custom)return pickMode=='add'?'Built-in track':'Built-in slot (only the audio is removed)';
  const al=t.alb&&ALBUMS.find(a=>a.key===t.alb);
  return al?'Album: '+al.n:(t.album?'Album tag: '+t.album:'Added song');
 }
 function delRender(){
  const qv=$('delq').value.trim().toLowerCase(),list=$('dellist');
- const all=TR.filter(t=>have(t.id));
+ const pal=pickMode=='add'?ALBUMS.find(a=>a.key===pickAlb):null;
+ const all=TR.filter(t=>have(t.id)&&(!pal||!pal.ids.includes(t.id)));
  const shown=all.filter(t=>!qv||(delTitle(t)+' '+(t.album||'')+' '+delInfo(t)).toLowerCase().includes(qv));
  list.innerHTML='';
- if(!shown.length){const d=document.createElement('div');d.className='none';d.textContent=all.length?'No songs match your search.':'No songs are saved on this device.';list.appendChild(d)}
+ if(!shown.length){const d=document.createElement('div');d.className='none';d.textContent=all.length?'No songs match your search.':(pal?'Every song on this device is already in this album.':'No songs are saved on this device.');list.appendChild(d)}
  shown.forEach(t=>{
   const l=document.createElement('label'),c=document.createElement('input'),sp=document.createElement('span');
   c.type='checkbox';c.checked=delSel.has(t.id);
@@ -1373,21 +1433,30 @@ function delRender(){
 function delCount(total,shown){
  const n=delSel.size;
  $('delc').textContent=n?n+' selected of '+total+' songs':(shown&&shown.length!==total?shown.length+' of '+total+' songs shown':total+' songs on this device');
- $('delok').disabled=!n;$('delok').textContent=n?'DELETE ('+n+')':'DELETE';
+ const w=pickMode=='add'?'ADD':'DELETE';$('delok').disabled=!n;$('delok').textContent=n?w+' ('+n+')':w;
 }
-function openDelete(){delSel=new Set();$('delq').value='';delRender();$('deldlg').classList.remove('hide')}
+function openDelete(){pickMode='del';pickAlb='';$('delh').textContent='DELETE SONGS';delSel=new Set();$('delq').value='';delRender();$('deldlg').classList.remove('hide')}
+function openLibPicker(al){if(!al||!al.album)return;pickMode='add';pickAlb=al.key;$('delh').textContent='ADD TO: '+al.n;delSel=new Set();$('delq').value='';delRender();$('deldlg').classList.remove('hide')}
+async function linkToAlbum(){
+ const al=ALBUMS.find(a=>a.key===pickAlb);if(!al)return;
+ const ids=[...delSel].filter(i=>byId[i]&&have(i)&&!al.ids.includes(i));if(!ids.length)return;
+ ids.forEach(i=>al.ids.push(i));
+ await saveAlbums();rebuildAll();$('deldlg').classList.add('hide');
+ draw();$('nt').textContent=ids.length+' song'+(ids.length==1?'':'s')+' added to \"'+al.n+'\".';
+}
 $('gdel').onclick=openDelete;
 $('delq').oninput=delRender;
 $('delno').onclick=()=>$('deldlg').classList.add('hide');
 $('delall').onclick=()=>{const sh=$('dellist')._shown||[];const allOn=sh.length&&sh.every(i=>delSel.has(i));sh.forEach(i=>allOn?delSel.delete(i):delSel.add(i));delRender()};
 $('delok').onclick=async()=>{
+ if(pickMode=='add'){linkToAlbum();return}
  const ids=[...delSel].filter(i=>byId[i]&&have(i));if(!ids.length)return;
  if(!confirm('Delete '+ids.length+' song'+(ids.length==1?'':'s')+' from this device? This cannot be undone.'))return;
  if(state!='stop'&&q.some(x=>ids.includes(x))){stop();q=[];qi=-1}
  for(const i of ids){
   const t=byId[i];
+  ALBUMS.forEach(a=>{a.ids=a.ids.filter(x=>x!==i)});
   if(t&&t.custom){
-   ALBUMS.forEach(a=>{a.ids=a.ids.filter(x=>x!==i)});
    const ci=CUSTOM.indexOf(i);if(ci>=0)CUSTOM.splice(ci,1);
    purge(i);
   }else{
@@ -1432,7 +1501,7 @@ draw();ui();restore();padStart();
 (function(){
  /* PWA: service worker (only on http/https) */
  try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))
-  addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}catch(e){}
+  addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(reg){try{reg.update()}catch(e){}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){try{reg.update()}catch(e){}}})}).catch(function(){})})}catch(e){}
  /* Triple-tap the background (anywhere that is not a control) to toggle fullscreen */
  (function(){
   var d=document.documentElement,req=d.requestFullscreen||d.webkitRequestFullscreen,ex=document.exitFullscreen||document.webkitExitFullscreen;
