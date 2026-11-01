@@ -146,6 +146,22 @@ body.scan #scan{display:block}
 body.lyr.lypanel #lyr{display:block}#lyr.none{opacity:.55;font-style:italic}#lyr.empty{display:none!important}
 #lydlg{position:fixed;inset:0;z-index:57;display:grid;place-items:center;background:rgba(3,4,4,.92);padding:calc(3vmin + var(--sat)) calc(3vmin + var(--sar)) calc(3vmin + var(--sab)) calc(3vmin + var(--sal))}
 #lydlg.hide{display:none}
+#deldlg{position:fixed;inset:0;z-index:58;display:grid;place-items:center;background:rgba(3,4,4,.92);padding:calc(3vmin + var(--sat)) calc(3vmin + var(--sar)) calc(3vmin + var(--sab)) calc(3vmin + var(--sal))}
+#deldlg.hide{display:none}
+#delbox{width:min(94vw,580px);display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.35);padding:4vmin;background:rgba(20,24,24,.97);font-size:15px;max-height:calc(100vh - 6vmin - var(--sat) - var(--sab));max-height:calc(100dvh - 6vmin - var(--sat) - var(--sab))}
+#delbox h2{font-weight:400;letter-spacing:.14em;font-size:1.3em;margin-bottom:.6em;text-align:center}
+#delq{width:100%;font:inherit;font-size:16px;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);padding:.5em .7em;margin-bottom:.6em;border-radius:2px;user-select:text;-webkit-user-select:text}
+#delc{opacity:.75;font-size:.85em;margin-bottom:.5em;text-align:center}
+#dellist{flex:1 1 auto;min-height:5em;overflow-y:auto;overscroll-behavior:contain;border:1px solid rgba(255,255,255,.2);margin-bottom:.8em}
+#dellist label{display:flex;gap:.7em;align-items:center;padding:.55em .7em;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;line-height:1.3}
+#dellist label:active{background:rgba(255,255,255,.08)}
+#dellist input{flex:none;width:1.2em;height:1.2em;accent-color:#fff}
+#dellist span{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis}
+#dellist small{display:block;opacity:.6;font-size:.8em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dellist .none{padding:1em;text-align:center;opacity:.6}
+#delbox .row{display:flex;gap:.6em;justify-content:center;flex-wrap:wrap}
+#delbox button{padding:.6em 1.2em;font-size:1em}#delbox button:disabled{opacity:.4}
+@media (max-height:520px){#delbox{padding:2vmin 3vmin}#delbox h2{margin-bottom:.3em}#delq{padding:.3em .6em;margin-bottom:.3em}#delc{margin-bottom:.3em}#dellist{min-height:3.5em;margin-bottom:.5em}#delbox button{padding:.4em .9em}}
 #lybox{width:min(94vw,580px);border:2px solid rgba(255,255,255,.35);padding:4vmin;text-align:center;background:rgba(20,24,24,.97);font-size:15px}
 #lybox h2{font-weight:400;letter-spacing:.14em;font-size:1.3em;margin-bottom:.3em}
 #lybox p{opacity:.75;font-size:.9em;margin-bottom:.8em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -165,11 +181,12 @@ body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:au
 </style>
 </head>
 <body>
-<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3 / .flac / .m4a / .ogg</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><div class="gex"><button id="gexp">EXPORT MUSIC</button><button id="gexa">EXPORT ALL AUDIO</button></div><p class="gnote">Export saves your songs, Soundtrack Albums and cover art into one zip you can back up, move to another device, or import again here.</p><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
+<div id="gate" class="hide"><div id="gdrop"><h2>INSERT AUDIO</h2><p>Choose your <b>audio.zip</b> (any file name; .zip or .7z) and/or loose <b>.mp3 / .flac / .m4a / .ogg</b> files (you can select several at once). Tracks are matched by name: tapes, Paz's Reports 1 to 9, communications records and diary entries. Songs are optional. Any song that isn't one of the built-in slots is added to Music as a new slot, named from its mp3 tags. This is a one-time step: everything is extracted at once and saved on this device, so you won't need to upload again.</p><button id="gbtn">CHOOSE FILES</button><div class="gex"><button id="gexp">EXPORT MUSIC</button><button id="gexa">EXPORT ALL AUDIO</button></div><div class="gex"><button id="gdel">DELETE SONGS</button></div><p class="gnote">Export saves your songs, Soundtrack Albums and cover art into one zip you can back up, move to another device, or import again here.</p><button id="gx" hidden>CLOSE</button><div id="gprog"><i id="gbar"></i></div><div id="gmsg"></div><input type="file" id="zin" multiple accept=".zip,.7z,.mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*,application/zip,application/x-zip-compressed,application/x-7z-compressed" hidden></div></div>
 <div id="adlg" class="hide"><div id="adbox"><h2 id="adt">NEW SOUNDTRACK ALBUM</h2><p id="adp">Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
 <input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
 <div id="bg"></div><div id="bgd"></div><div id="scan"></div><div id="sub"></div>
 <input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden>
+<div id="deldlg" class="hide"><div id="delbox"><h2>DELETE SONGS</h2><input id="delq" type="search" placeholder="Search by title, artist or album" autocomplete="off" autocapitalize="off" spellcheck="false"><p id="delc"></p><div id="dellist"></div><div class="row"><button id="delall" type="button">SELECT SHOWN</button><button id="delok" type="button" disabled>DELETE</button><button id="delno" type="button">CANCEL</button></div></div></div>
 <div id="lydlg" class="hide"><div id="lybox"><h2>LYRICS</h2><p id="lyt"></p><textarea id="lytxt" placeholder="Paste lyrics here, or tap LOAD .LRC FILE. Plain text works. Synced (LRC) lyrics work too, e.g. [00:12.50]Words of the line (tags like [ti:], [ar:], [offset:] are understood)" spellcheck="false"></textarea><p id="lyst"></p><select id="lyres" hidden></select><div id="lyoffrow"><span>Timing offset, this song only</span><button id="lyom" type="button">&minus;</button><input id="lyoi" type="number" step="0.1" min="-60" max="60" value="0" inputmode="decimal"><span>s</span><button id="lyop" type="button">+</button></div><div class="row"><button id="lyok">SAVE</button><button id="lyweb" title="Search the free LRCLIB database for synced lyrics">FIND ONLINE</button><button id="lyfile" title="Load a .lrc or .txt lyrics file">LOAD .LRC FILE</button><input type="file" id="lyin" accept=".lrc,.txt,text/plain" hidden><button id="lyrd" title="Load lyrics stored inside this audio file">READ FROM FILE</button><button id="lycl">CLEAR</button><button id="lyno">CANCEL</button></div></div></div>
 <div id="thm" class="hide"><div id="thbox"><h2>CUSTOMIZE</h2><div id="thbody"></div><div class="row"><button id="thrs">RESET</button><button id="thok">DONE</button></div></div></div>
 <button id="fs" title="Fullscreen" aria-label="Fullscreen" hidden><svg id="fsi" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
@@ -856,8 +873,8 @@ function enter(){if(pane=='L'){pane='R';draw();act(-1)}else act(tracks()[rsel])}
 function same(){const t=tracks()[rsel];return state!='stop'&&(t<0?qname===G[sel].n:t===q[qi])}
 function hasTracks(){return Object.keys(files).length>0}
 function openGate(){$('gate').classList.remove('hide');$('gmsg').textContent='';$('gmsg').className='';$('gx').hidden=false}
-function closeGate(){['gate','adlg','thm','lydlg'].forEach(x=>$(x).classList.add('hide'))}
-const gateOpen=()=>['gate','adlg','thm','lydlg'].some(x=>!$(x).classList.contains('hide'));
+function closeGate(){['gate','adlg','thm','lydlg','deldlg'].forEach(x=>$(x).classList.add('hide'))}
+const gateOpen=()=>['gate','adlg','thm','lydlg','deldlg'].some(x=>!$(x).classList.contains('hide'));
 
 /* ---------- input detection: hints show only for the device in use ---------- */
 let inp='';
@@ -1330,6 +1347,59 @@ $('bLy').onclick=openLyrics;$('lyok').onclick=saveLyrics;$('lyno').onclick=()=>{
 function lySetOff(v){v=Math.round((+v||0)*10)/10;v=Math.max(-60,Math.min(60,v));if(v)LYO[lyId]=v;else delete LYO[lyId];$('lyoi').value=v;lyTick()}
 $('lyoi').oninput=()=>{const v=+$('lyoi').value;if(isFinite(v)){if(v)LYO[lyId]=Math.max(-60,Math.min(60,v));else delete LYO[lyId];lyTick()}};
 $('lyom').onclick=()=>lySetOff(lyOff(lyId)-.1);$('lyop').onclick=()=>lySetOff(lyOff(lyId)+.1);$('lycl').onclick=()=>{$('lytxt').value='';saveLyrics()};
+/* ---------- Delete songs (search + multi-select) ---------- */
+let delSel=new Set();
+const delTitle=t=>t.custom?(t.artist?t.artist+' - ':'')+(t.title||t.n):(t.t||t.n);
+function delInfo(t){
+ if(!t.custom)return 'Built-in slot (only the audio is removed)';
+ const al=t.alb&&ALBUMS.find(a=>a.key===t.alb);
+ return al?'Album: '+al.n:(t.album?'Album tag: '+t.album:'Added song');
+}
+function delRender(){
+ const qv=$('delq').value.trim().toLowerCase(),list=$('dellist');
+ const all=TR.filter(t=>have(t.id));
+ const shown=all.filter(t=>!qv||(delTitle(t)+' '+(t.album||'')+' '+delInfo(t)).toLowerCase().includes(qv));
+ list.innerHTML='';
+ if(!shown.length){const d=document.createElement('div');d.className='none';d.textContent=all.length?'No songs match your search.':'No songs are saved on this device.';list.appendChild(d)}
+ shown.forEach(t=>{
+  const l=document.createElement('label'),c=document.createElement('input'),sp=document.createElement('span');
+  c.type='checkbox';c.checked=delSel.has(t.id);
+  c.onchange=()=>{c.checked?delSel.add(t.id):delSel.delete(t.id);delCount(all.length,shown)};
+  sp.innerHTML=esc(delTitle(t))+'<small>'+esc(delInfo(t))+'</small>';
+  l.append(c,sp);list.appendChild(l);
+ });
+ list._shown=shown.map(t=>t.id);delCount(all.length,shown);
+}
+function delCount(total,shown){
+ const n=delSel.size;
+ $('delc').textContent=n?n+' selected of '+total+' songs':(shown&&shown.length!==total?shown.length+' of '+total+' songs shown':total+' songs on this device');
+ $('delok').disabled=!n;$('delok').textContent=n?'DELETE ('+n+')':'DELETE';
+}
+function openDelete(){delSel=new Set();$('delq').value='';delRender();$('deldlg').classList.remove('hide')}
+$('gdel').onclick=openDelete;
+$('delq').oninput=delRender;
+$('delno').onclick=()=>$('deldlg').classList.add('hide');
+$('delall').onclick=()=>{const sh=$('dellist')._shown||[];const allOn=sh.length&&sh.every(i=>delSel.has(i));sh.forEach(i=>allOn?delSel.delete(i):delSel.add(i));delRender()};
+$('delok').onclick=async()=>{
+ const ids=[...delSel].filter(i=>byId[i]&&have(i));if(!ids.length)return;
+ if(!confirm('Delete '+ids.length+' song'+(ids.length==1?'':'s')+' from this device? This cannot be undone.'))return;
+ if(state!='stop'&&q.some(x=>ids.includes(x))){stop();q=[];qi=-1}
+ for(const i of ids){
+  const t=byId[i];
+  if(t&&t.custom){
+   ALBUMS.forEach(a=>{a.ids=a.ids.filter(x=>x!==i)});
+   const ci=CUSTOM.indexOf(i);if(ci>=0)CUSTOM.splice(ci,1);
+   purge(i);
+  }else{
+   if(urls[i])URL.revokeObjectURL(urls[i]);delete urls[i];delete files[i];
+   dbDel(i);dbDel('lyr:'+i);delete LY[i];dbDel('lyo:'+i);delete LYO[i];
+  }
+ }
+ await saveAlbums();rebuildAll();
+ G=curG();sel=Math.min(sel,Math.max(0,G.length-1));rsel=0;draw();
+ delSel=new Set();delRender();
+ $('gmsg').className='';$('gmsg').textContent=ids.length+' song'+(ids.length==1?'':'s')+' deleted.';
+};
 $('gexp').onclick=()=>exportMusic(false);$('gexa').onclick=()=>exportMusic(true);
 applySettings();
 
