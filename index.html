@@ -120,6 +120,8 @@ button.on{background:var(--sel,#e6e9e7)}
 body.novig #bg::after{display:none}
 body.nospin .reel{animation:none}
 #bgd{position:fixed;inset:0;pointer-events:none}
+#bgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none}
+#bgv.on{display:block}
 #scan{display:none;position:fixed;inset:0;z-index:70;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
 body.scan #scan{display:block}
 .th{width:1.7em;height:1.7em;object-fit:cover;vertical-align:middle;margin-right:.55em;border-radius:2px}
@@ -191,6 +193,20 @@ body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:au
 :is(#gdrop,#adbox,#thbox,#lybox,#delbox) input[type=color]{border-color:var(--ln)}
 #gdrop #gx,#adbox .row,#lybox .row{background:var(--dlgs)}
 #dellist,#lyres{border-color:var(--ln)}#dellist label{border-bottom-color:var(--ln2)}#dellist label:active{background:var(--fld)}
+
+/* ---- extra lyric + theme options ---- */
+body #sub{color:var(--lyc,#fff);font-family:var(--lyf,inherit);text-transform:var(--lytt,none)}
+body[data-lyfx=outline] #sub{text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 5px #000}
+body[data-lyfx=glow] #sub{text-shadow:0 0 6px var(--lyc,#fff),0 0 16px var(--lyc,#fff),0 1px 3px #000}
+body[data-lyfx=none] #sub{text-shadow:none}
+body.lyboxon #sub{background:rgba(0,0,0,var(--lybop,.62))}
+#lyr{font-family:var(--lyf,inherit);text-transform:var(--lytt,none)}
+button{border-radius:calc(var(--rad,0px) + 2px)}
+:is(.list,.player,.desc,.bar,.foot span,#lyr,#gdrop,#adbox,#thbox,#lybox,#delbox,.th){border-radius:var(--rad,0px)}
+body.glass :is(.list,.player,.desc){backdrop-filter:blur(var(--pbl,0px));-webkit-backdrop-filter:blur(var(--pbl,0px))}
+.reel{animation-duration:var(--rs,2.2s)}
+@media (prefers-reduced-motion:reduce){.reel{animation-duration:12s}}
+.chips .sv{display:flex;gap:.4em;align-items:center}.chips .sv .x{padding:.4em .55em;opacity:.7}
 </style>
 </head>
 <body>
@@ -198,7 +214,7 @@ body.lytop #sub{bottom:auto;top:calc(5vh + var(--sat))}body.lymid #sub{bottom:au
 <div id="adlg" class="hide"><div id="adbox"><h2 id="adt">NEW SOUNDTRACK ALBUM</h2><p id="adp">Name your album. It will appear in the Music list, and you can then add your own mp3 files to it.</p><input id="adn" type="text" maxlength="60" placeholder="Album name" autocomplete="off"><div class="row"><button id="adok">CREATE</button><button id="adno">CANCEL</button></div></div></div>
 <input type="file" id="ain" multiple accept=".mp3,.m4a,.ogg,.wav,.flac,.aac,.opus,audio/*" hidden>
 <div id="bg"></div><div id="bgd"></div><div id="scan"></div><div id="sub"></div>
-<input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden>
+<input type="file" id="cin" accept="image/*" hidden><input type="file" id="bgin" accept="image/*" hidden><input type="file" id="bgmin" accept="image/gif,image/webp,image/apng,video/*" hidden>
 <div id="deldlg" class="hide"><div id="delbox"><h2 id="delh">DELETE SONGS</h2><input id="delart" type="text" placeholder="Artist name (used for songs that have none)" autocomplete="off" spellcheck="false" hidden><input id="delq" type="search" placeholder="Search by title, artist or album" autocomplete="off" autocapitalize="off" spellcheck="false"><p id="delc"></p><div id="deldbg" hidden></div><div id="dellist"></div><div class="row"><button id="delall" type="button">SELECT SHOWN</button><button id="delok" type="button" disabled>DELETE</button><button id="delno" type="button">CANCEL</button></div></div></div>
 <div id="lydlg" class="hide"><div id="lybox"><h2>LYRICS</h2><p id="lyt"></p><textarea id="lytxt" placeholder="Paste lyrics here, or tap LOAD .LRC FILE. Plain text works. Synced (LRC) lyrics work too, e.g. [00:12.50]Words of the line (tags like [ti:], [ar:], [offset:] are understood)" spellcheck="false"></textarea><p id="lyst"></p><select id="lyres" hidden></select><div id="lyoffrow"><span>Timing offset, this song only</span><button id="lyom" type="button">&minus;</button><input id="lyoi" type="number" step="0.1" min="-60" max="60" value="0" inputmode="decimal"><span>s</span><button id="lyop" type="button">+</button></div><div class="row"><button id="lyok">SAVE</button><button id="lyweb" title="Search the free LRCLIB database for synced lyrics">FIND ONLINE</button><button id="lyfile" title="Load a .lrc or .txt lyrics file">LOAD .LRC FILE</button><input type="file" id="lyin" accept=".lrc,.txt,text/plain" hidden><button id="lyrd" title="Load lyrics stored inside this audio file">READ FROM FILE</button><button id="lycl">CLEAR</button><button id="lyno">CANCEL</button></div></div></div>
 <div id="thm" class="hide"><div id="thbox"><h2>CUSTOMIZE</h2><div id="thbody"></div><div class="row"><button id="thrs">RESET</button><button id="thok">DONE</button></div></div></div>
@@ -918,7 +934,9 @@ async function restore(){
  ALBUMS.forEach(a=>{a.ids=a.ids.filter(i=>byId[i]&&all[i] instanceof Blob)});
  ALBUMS.forEach(a=>{const cb=all['cover:'+a.key];if(cb instanceof Blob)a.cover=URL.createObjectURL(cb)});
  if(!hadLS&&all.settings&&typeof all.settings==='object')Object.assign(ST,all.settings);
+ try{if(!localStorage.getItem('zvt-mythemes')&&all.mythemes&&typeof all.mythemes==='object')localStorage.setItem('zvt-mythemes',JSON.stringify(all.mythemes))}catch(e){}
  if(all.bgimg instanceof Blob)bgUrl=URL.createObjectURL(all.bgimg);
+ if(all.bgmedia instanceof Blob){bgmUrl=URL.createObjectURL(all.bgmedia);bgmType=all.bgmediat==='video'||/^video\//.test(all.bgmedia.type)?'video':'gif'}
  Object.keys(all).forEach(k=>{if(k.startsWith('lyr:')&&typeof all[k]==='string')LY[+k.slice(4)]=all[k];else if(k.startsWith('lyo:')&&isFinite(+all[k]))LYO[+k.slice(4)]=+all[k]});
  applySettings();
  syncAlbums();
@@ -1129,8 +1147,8 @@ async function exportMusic(everything){
 }
 
 /* ---------- Customization ---------- */
-const DEF={bgm:'default',bg1:'#0b0e0e',bg2:'#1c2b26',ang:160,bri:80,blur:0,dim:0,vig:1,scan:0,covbg:0,ink:'#e9ecea',bar:'#d9dcda',sel:'#e6e9e7',acc:'#ffffff',panel:'#080a0a',pan:78,font:'default',fsz:100,ls:4,shell:'#16191a',label:'#e8eae3',stripe:'#3f9a62',lblink:'#333333',reel:'#d8dad5',brand:'SONY',model:'BHF 46',line2:'Cuba, 1975',spin:1,lyr:0,lymode:'sub',lypos:'bottom',lybox:1,lysz:100,lyoff:0,awake:0,autoinfo:1};
-const ST={...DEF};let bgUrl='',curCoverUrl='',hadLS=false;
+const DEF={bgm:'default',bg1:'#0b0e0e',bg2:'#1c2b26',ang:160,bri:80,blur:0,dim:0,vig:1,scan:0,covbg:0,ink:'#e9ecea',bar:'#d9dcda',sel:'#e6e9e7',acc:'#ffffff',panel:'#080a0a',pan:78,font:'default',fsz:100,ls:4,shell:'#16191a',label:'#e8eae3',stripe:'#3f9a62',lblink:'#333333',reel:'#d8dad5',brand:'SONY',model:'BHF 46',line2:'Cuba, 1975',spin:1,lyr:0,lymode:'sub',lypos:'bottom',lybox:1,lysz:100,lyoff:0,awake:0,autoinfo:1,lyclr:'#ffffff',lyfx:'shadow',lyfont:'same',lycase:0,lybop:62,rad:0,pblur:0,rspd:2.2};
+const ST={...DEF};let bgUrl='',bgmUrl='',bgmType='',curCoverUrl='',hadLS=false;
 try{const s=localStorage.getItem('zvt-settings');if(s){Object.assign(ST,JSON.parse(s));hadLS=true}}catch(e){}
 const FONTS={default:'"Eurostile","Bank Gothic","Segoe UI","Helvetica Neue",Arial,sans-serif',mono:'"Courier New",ui-monospace,monospace',serif:'Georgia,"Times New Roman",serif',round:'ui-rounded,"Trebuchet MS",system-ui,sans-serif',hand:'"Segoe Print","Bradley Hand","Comic Sans MS",cursive'};
 const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
@@ -1140,12 +1158,16 @@ const contrastR=(a,b)=>{const x=relLum(a),y=relLum(b);return (Math.max(x,y)+.05)
 const mixHex=(a,b,t)=>{const x=hexRGB(a),y=hexRGB(b);return'#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const shade=(h,f)=>{const n=parseInt(h.slice(1),16),c=x=>Math.round(x*f).toString(16).padStart(2,'0');return'#'+c(n>>16)+c(n>>8&255)+c(n&255)};
 const PRESETS={
- 'Peace Walker':(({lyr,lymode,lypos,lybox,lysz,lyoff,awake,autoinfo,...r})=>r)(DEF),
+ 'Peace Walker':(({lyr,lymode,lypos,lybox,lysz,lyoff,awake,autoinfo,lyclr,lyfx,lyfont,lycase,lybop,...r})=>r)(DEF),
  'Mother Base':{ink:'#dff5e6',bar:'#9fd6b0',sel:'#cdeed8',acc:'#6fe39b',panel:'#04120a',stripe:'#2f8f5a',bgm:'grad',bg1:'#03150c',bg2:'#0b3a22',ang:160},
  'Outer Heaven':{ink:'#ffe6c7',bar:'#f0a64a',sel:'#ffd9a0',acc:'#ff9a2e',panel:'#140a02',stripe:'#c8741a',bgm:'grad',bg1:'#1a0d02',bg2:'#4a2406',ang:160},
  'Midnight':{ink:'#e3ecff',bar:'#9db8f0',sel:'#cfe0ff',acc:'#6aa2ff',panel:'#050a18',stripe:'#3d6fd1',bgm:'grad',bg1:'#040814',bg2:'#12265a',ang:160},
  'Crimson':{ink:'#ffe3e3',bar:'#e07a7a',sel:'#ffc9c9',acc:'#ff5a5a',panel:'#170406',stripe:'#b3262f',bgm:'grad',bg1:'#1a0406',bg2:'#5a0f16',ang:160},
  'Mono':{ink:'#f2f2f2',bar:'#cfcfcf',sel:'#ffffff',acc:'#ffffff',panel:'#0a0a0a',stripe:'#777777',bgm:'color',bg1:'#0b0b0b'},
+ 'Sakura':{ink:'#ffeef3',bar:'#f2a9bf',sel:'#ffd3e0',acc:'#ff8fb1',panel:'#1a0a10',stripe:'#d9607f',bgm:'grad',bg1:'#1d0a12',bg2:'#5a2238',ang:150,rad:6},
+ 'Ocean':{ink:'#e2fbff',bar:'#8fd3df',sel:'#c4f1f8',acc:'#4fd8e8',panel:'#03141a',stripe:'#1f8fa3',bgm:'grad',bg1:'#021117',bg2:'#0b4a5a',ang:180,rad:4,pblur:8},
+ 'Sunset':{ink:'#fff0e0',bar:'#f5a97a',sel:'#ffd9b8',acc:'#ff7a45',panel:'#1a0b10',stripe:'#e0527a',bgm:'grad',bg1:'#2b0f3a',bg2:'#ff7a45',ang:190,rad:4},
+ 'Terminal':{ink:'#b6ffc8',bar:'#4dff88',sel:'#8dffb0',acc:'#39ff7a',panel:'#010a04',stripe:'#1fae52',font:'mono',bgm:'color',bg1:'#010603',scan:1,rad:0},
  'Vaporwave':{ink:'#ffe8ff',bar:'#ff9be6',sel:'#ffd0f5',acc:'#5ffbf1',panel:'#120420',stripe:'#ff4fa8',bgm:'grad',bg1:'#1b0536',bg2:'#ff4fa8',ang:200}
 };
 function applyBg(){
@@ -1154,7 +1176,16 @@ function applyBg(){
  else if(s.bgm=='color')bg=s.bg1;
  else if(s.bgm=='grad')bg='linear-gradient('+s.ang+'deg,'+s.bg1+','+s.bg2+')';
  else if(s.bgm=='image'&&bgUrl)bg='url("'+bgUrl+'") center/cover no-repeat';
+ else if(s.bgm=='media'&&bgmUrl&&bgmType=='gif')bg='url("'+bgmUrl+'") center/cover no-repeat';
  e.style.background=bg;
+ {let v=$('bgv');
+  const wantV=!(s.covbg&&curCoverUrl)&&s.bgm=='media'&&bgmUrl&&bgmType=='video';
+  if(wantV){
+   if(!v){v=document.createElement('video');v.id='bgv';v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.disablePictureInPicture=true;e.appendChild(v)}
+   if(v.getAttribute('data-u')!==bgmUrl){v.src=bgmUrl;v.setAttribute('data-u',bgmUrl)}
+   v.classList.add('on');v.play().catch(()=>{});
+  }else if(v){v.classList.remove('on');try{v.pause()}catch(_){}}
+ }
  e.style.filter='brightness('+s.bri/100+') contrast(1.05)'+(s.blur?' blur('+s.blur+'px)':'');
  e.style.transform=s.blur?'scale(1.08)':'';
 }
@@ -1177,6 +1208,12 @@ function applySettings(){
   r.setProperty('--selink',contrastR('#101313',sl)>=contrastR('#ffffff',sl)?'#101313':'#ffffff')}
  $('cShell').setAttribute('fill',s.shell);$('cLabel').setAttribute('fill',s.label);$('cStripe').setAttribute('fill',s.stripe);
  $('cBrand').textContent=s.brand;$('cModel').textContent=s.model;$('lb2').textContent=s.line2;
+ r.setProperty('--lyc',/^#[0-9a-f]{6}$/i.test(s.lyclr)?s.lyclr:'#ffffff');
+ r.setProperty('--lyf',s.lyfont&&s.lyfont!='same'?(FONTS[s.lyfont]||'inherit'):'inherit');
+ r.setProperty('--lytt',s.lycase?'uppercase':'none');r.setProperty('--lybop',(+s.lybop||0)/100);
+ document.body.dataset.lyfx=s.lyfx||'shadow';
+ r.setProperty('--rad',(+s.rad||0)+'px');r.setProperty('--pbl',(+s.pblur||0)+'px');b.toggle('glass',+s.pblur>0);
+ r.setProperty('--rs',(+s.rspd||2.2)+'s');
  $('bgd').style.background='rgba(0,0,0,'+s.dim/100+')';
  applyBg();updLyr(true);
  try{wakeSync()}catch(e){}
@@ -1185,19 +1222,23 @@ let svT=0;
 function saveSettings(){try{localStorage.setItem('zvt-settings',JSON.stringify(ST))}catch(e){}clearTimeout(svT);svT=setTimeout(()=>dbPut('settings',{...ST}),400)}
 const commit=()=>{applySettings();saveSettings()};
 const SECT=[
- ['Lyrics',[['lyr','check','Show lyrics (adds a LYRICS button)'],['lymode','select','Display',[['sub','Subtitles on screen'],['panel','Lyrics panel'],['both','Both']]],['lypos','select','Subtitle position',[['bottom','Bottom'],['middle','Middle'],['top','Top']]],['lybox','check','Dark box behind subtitles'],['lysz','range','Lyrics size',70,200,5,'%']]],
+ ['Lyrics',[['lyr','check','Show lyrics (adds a LYRICS button)'],['lymode','select','Display',[['sub','Subtitles on screen'],['panel','Lyrics panel'],['both','Both']]],['lypos','select','Subtitle position',[['bottom','Bottom'],['middle','Middle'],['top','Top']]],['lybox','check','Dark box behind subtitles'],['lysz','range','Lyrics size',70,200,5,'%'],['lyclr','color','Subtitle color'],['lyfx','select','Subtitle style',[['shadow','Shadow'],['outline','Outline'],['glow','Glow'],['none','Plain']]],['lyfont','select','Lyrics font',[['same','Same as app'],['default','Classic'],['mono','Typewriter'],['serif','Serif'],['round','Rounded'],['hand','Handwritten']]],['lycase','check','UPPERCASE lyrics'],['lybop','range','Subtitle box opacity',10,100,5,'%']]],
  ['Background',[
-  ['bgm','select','Background',[['default','Original photo'],['color','Solid color'],['grad','Gradient'],['image','My picture']]],
+  ['bgm','select','Background',[['default','Original photo'],['color','Solid color'],['grad','Gradient'],['image','My picture'],['media','My GIF / video']]],
   ['bg1','color','Color 1'],['bg2','color','Color 2 (gradient)'],['ang','range','Gradient angle',0,360,5,'°'],
-  ['@pic'],['covbg','check','Playing album cover as background'],
+  ['@pic'],['@media'],['covbg','check','Playing album cover as background'],
   ['bri','range','Brightness',20,150,5,'%'],['blur','range','Blur',0,24,1,'px'],['dim','range','Darken',0,90,5,'%']]],
  ['Colors',[['ink','color','Text'],['bar','color','Header bars'],['sel','color','Highlight'],['acc','color','Accent (progress, tabs)'],['panel','color','Panel color'],['pan','range','Panel opacity',20,100,2,'%']]],
  ['Cassette',[['shell','color','Shell'],['label','color','Label paper'],['stripe','color','Label stripe'],['lblink','color','Label ink'],['reel','color','Reels'],['brand','text','Brand text'],['model','text','Model text'],['line2','text','Label line 2']]],
  ['Text',[['font','select','Font',[['default','Classic'],['mono','Typewriter'],['serif','Serif'],['round','Rounded'],['hand','Handwritten']]],['fsz','range','Text size',80,130,5,'%'],['ls','range','Letter spacing',0,20,1,'']]],
- ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels']]],
+ ['Shape',[['rad','range','Corner roundness',0,20,1,'px'],['pblur','range','Frosted glass panels',0,30,1,'px']]],
+ ['Effects',[['vig','check','Dark edges'],['scan','check','Scanlines'],['spin','check','Spinning reels'],['rspd','range','Reel spin time',0.8,8,0.2,'s']]],
  ['Power',[['awake','check','Keep screen awake while playing'],['@sleep','x','Sleep timer']]],
  ['Library',[['autoinfo','check','Fill in missing song info online']]]
 ];
+const MYK='zvt-mythemes';
+const myThemes=()=>{try{const o=JSON.parse(localStorage.getItem(MYK));return o&&typeof o==='object'?o:{}}catch(e){return{}}};
+const putMyThemes=o=>{try{localStorage.setItem(MYK,JSON.stringify(o))}catch(e){}dbPut('mythemes',o)};
 function buildPanel(){
  const body=$('thbody'),keep=body.scrollTop;body.innerHTML='';
  const sec=t=>{const d=document.createElement('div');d.className='ths';d.textContent=t.toUpperCase();body.appendChild(d)};
@@ -1210,6 +1251,25 @@ function buildPanel(){
  const be=document.createElement('button');be.textContent='EXPORT MY THEME';be.onclick=exportTheme;
  const bi=document.createElement('button');bi.textContent='IMPORT THEME';bi.onclick=()=>$('thin').click();
  tw.append(be,bi);body.appendChild(tw);
+{
+  const sv=document.createElement('div');sv.className='chips';sv.style.cssText='margin-top:.6em;align-items:center';
+  const ni=document.createElement('input');ni.type='text';ni.maxLength=20;ni.placeholder='Name this theme';ni.style.cssText='flex:1;min-width:7em;font:inherit;font-size:16px;padding:.35em .5em;border-radius:2px;border:1px solid;user-select:text;-webkit-user-select:text';
+  const bs=document.createElement('button');bs.textContent='SAVE';
+  bs.onclick=()=>{const n=ni.value.trim().slice(0,20);if(!n){thMsg='Type a name first.';buildPanel();return}
+   const all=myThemes();if(!all[n]&&Object.keys(all).length>=20){thMsg='You can keep up to 20 saved themes.';buildPanel();return}
+   const snap={};Object.keys(themeFields()).forEach(k=>{snap[k]=ST[k]});all[n]=snap;putMyThemes(all);thMsg='Saved "'+n+'" to My themes.';buildPanel()};
+  sv.append(ni,bs);body.appendChild(sv);
+  const mt=myThemes(),names=Object.keys(mt);
+  if(names.length){
+   const cm=document.createElement('div');cm.className='chips';cm.style.marginTop='.6em';
+   names.forEach(n=>{const w=document.createElement('span');w.className='sv';
+    const b=document.createElement('button');b.textContent=n;
+    b.onclick=()=>{const c=cleanTheme(mt[n]);if(c.bgm=='image'&&!bgUrl)c.bgm='default';if(c.bgm=='media'&&!bgmUrl)c.bgm='default';Object.assign(ST,c);commit();buildPanel()};
+    const x=document.createElement('button');x.className='x';x.textContent='\u2715';x.title='Delete';
+    x.onclick=()=>{if(!confirm('Delete saved theme "'+n+'"?'))return;const a=myThemes();delete a[n];putMyThemes(a);buildPanel()};
+    w.append(b,x);cm.appendChild(w)});
+   body.appendChild(cm);
+  }}
  if(thMsg){const m=document.createElement('div');m.style.cssText='margin-top:.5em;font-size:.9em;opacity:.8;white-space:pre-wrap';m.textContent=thMsg;body.appendChild(m)}
  SECT.forEach(([title,fields])=>{
   sec(title);
@@ -1220,6 +1280,14 @@ function buildPanel(){
     const up=document.createElement('button');up.textContent='CHOOSE';up.onclick=()=>$('bgin').click();w.appendChild(up);
     if(bgUrl){const rm=document.createElement('button');rm.textContent='REMOVE';rm.onclick=()=>{URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg');if(ST.bgm=='image')ST.bgm='default';commit();buildPanel()};w.appendChild(rm)}
     row('My picture',w);return;
+   }
+   if(k==='@media'){
+    const w=document.createElement('div');w.style.cssText='display:flex;gap:.5em';
+    const up=document.createElement('button');up.textContent='CHOOSE';up.onclick=()=>$('bgmin').click();w.appendChild(up);
+    if(bgmUrl){const rm=document.createElement('button');rm.textContent='REMOVE';rm.onclick=()=>{clearBgMedia();if(ST.bgm=='media')ST.bgm='default';commit();buildPanel()};w.appendChild(rm)}
+    row('My GIF / video',w);
+    if(bgMsg){const m=document.createElement('div');m.style.cssText='font-size:.8em;opacity:.75;margin:-.2em 0 .4em;white-space:pre-wrap';m.textContent=bgMsg;body.appendChild(m)}
+    return;
    }
    if(k==='@sleep'){
     const w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;gap:.35em;align-items:flex-end';
@@ -1270,7 +1338,7 @@ async function exportTheme(){
   const blob=new Blob([JSON.stringify(o)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ZeroesVTapes-theme.json';
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},60000);
-  thMsg='Theme exported'+(o.bgImage?' with your background picture.':'.');
+  thMsg='Theme exported'+(o.bgImage?' with your background picture.':'.')+(ST.bgm=='media'?' (GIF / video backgrounds stay on this device and are not included.)':'');
  }catch(e){thMsg='Could not export the theme.'}
  buildPanel();
 }
@@ -1289,6 +1357,7 @@ async function importTheme(f){
   }
   if(blob){if(bgUrl)URL.revokeObjectURL(bgUrl);bgUrl=URL.createObjectURL(blob);await dbPut('bgimg',blob)}
   else if(clean.bgm=='image'&&!bgUrl)clean.bgm='default';
+  if(clean.bgm=='media'&&!bgmUrl)clean.bgm='default';
   Object.assign(ST,clean);commit();
   thMsg='Theme imported'+(blob?' (with its background picture).':'.');
  }catch(e){thMsg=e.message||'Could not import that theme.'}
@@ -1297,7 +1366,29 @@ async function importTheme(f){
 thIn.onchange=()=>{const f=thIn.files[0];thIn.value='';if(f)importTheme(f)};
 function openTheme(){thMsg='';buildPanel();$('thm').classList.remove('hide')}
 $('bSet').onclick=openTheme;$('thok').onclick=closeGate;
-$('thrs').onclick=()=>{if(bgUrl){URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg')}Object.keys(ST).forEach(k=>delete ST[k]);Object.assign(ST,DEF);commit();buildPanel()};
+$('thrs').onclick=()=>{if(bgUrl){URL.revokeObjectURL(bgUrl);bgUrl='';dbDel('bgimg')}clearBgMedia();Object.keys(ST).forEach(k=>delete ST[k]);Object.assign(ST,DEF);commit();buildPanel()};
+let bgMsg='';
+function clearBgMedia(){if(bgmUrl)URL.revokeObjectURL(bgmUrl);bgmUrl='';bgmType='';bgMsg='';dbDel('bgmedia');dbDel('bgmediat');const v=$('bgv');if(v){v.removeAttribute('src');v.removeAttribute('data-u');try{v.load()}catch(_){}}}
+$('bgmin').onchange=async()=>{
+ const f=$('bgmin').files[0];$('bgmin').value='';if(!f)return;
+ try{
+  const isV=/^video\//.test(f.type)||/\.(mp4|m4v|webm|mov)$/i.test(f.name);
+  const isG=/^image\//.test(f.type)||/\.(gif|webp|apng)$/i.test(f.name);
+  if(!isV&&!isG)throw new Error('Pick a GIF, WebP or a video (MP4 / WebM).');
+  if(f.size>200e6)throw new Error('That file is over 200 MB. Try a shorter or smaller one.');
+  const blob=f.type?f:new Blob([f],{type:isV?'video/mp4':'image/gif'});
+  if(isV){
+   await new Promise((res,rej)=>{const t=document.createElement('video'),u=URL.createObjectURL(blob);t.preload='metadata';t.muted=true;
+    t.onloadedmetadata=()=>{URL.revokeObjectURL(u);res()};t.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('Your browser cannot play that video. MP4 (H.264) or WebM work best.'))};t.src=u});
+  }
+  clearBgMedia();
+  bgmUrl=URL.createObjectURL(blob);bgmType=isV?'video':'gif';
+  await dbPut('bgmedia',blob);await dbPut('bgmediat',bgmType);
+  ST.bgm='media';
+  bgMsg=isV?'Video plays muted and loops. Big videos use more battery.':'GIF loops automatically.';
+  commit();buildPanel();
+ }catch(e){bgMsg=e.message||'Could not use that file.';buildPanel()}
+};
 $('bgin').onchange=async()=>{
  const f=$('bgin').files[0];$('bgin').value='';if(!f)return;
  try{const b=await imgToBlob(f,1920,false);if(bgUrl)URL.revokeObjectURL(bgUrl);bgUrl=URL.createObjectURL(b);await dbPut('bgimg',b);ST.bgm='image';commit();buildPanel()}
